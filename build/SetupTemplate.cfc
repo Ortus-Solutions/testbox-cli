@@ -16,12 +16,11 @@ component {
 	 * Setup the module template
 	 */
 	function run(){
-
 		// remove old .git
-		//directoryDelete( variables.cwd & ".git", true );
+		// directoryDelete( variables.cwd & ".git", true );
 
 		// Create new git repo
-		//command( "!git init" ).run();
+		// command( "!git init" ).run();
 
 		var moduleName = ask( "What is the human readable name of your module?" );
 		if ( !len( moduleName ) ) {
@@ -63,7 +62,9 @@ component {
 		// Finalize Message
 		print
 			.line()
-			.boldMagentaLine( "Your module template is now ready for development! Just add the github origin, commit some code and Go rock it!" )
+			.boldMagentaLine(
+				"Your module template is now ready for development! Just add the github origin, commit some code and Go rock it!"
+			)
 			.toConsole();
 	}
 

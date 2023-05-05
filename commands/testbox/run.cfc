@@ -57,11 +57,11 @@
 component {
 
 	// DI
-	property name="packageService" 	inject="PackageService";
-	property name="testingService" 	inject="TestingService@testbox-commands";
-	property name="CLIRenderer"    	inject="CLIRenderer@testbox-commands";
-	property name="serverService"  	inject="ServerService";
-	property name="moduleConfig"  	inject="box:moduleConfig:testbox-commands";
+	property name="packageService" inject="PackageService";
+	property name="testingService" inject="TestingService@testbox-commands";
+	property name="CLIRenderer"    inject="CLIRenderer@testbox-commands";
+	property name="serverService"  inject="ServerService";
+	property name="moduleConfig"   inject="box:moduleConfig:testbox-commands";
 
 	// Default Runner Options
 	variables.RUNNER_OPTIONS = {
@@ -109,9 +109,9 @@ component {
 		string testSuites,
 		string testSpecs,
 		string outputFile,
-		string outputFormats="",
+		string outputFormats = "",
 		boolean verbose,
-		boolean testboxUseLocal=false
+		boolean testboxUseLocal = false
 	){
 		// Ensure TestBox For reporting and conversions
 		ensureTestBox( arguments.testboxUseLocal );
@@ -120,7 +120,7 @@ component {
 		arguments.testboxUrl = discoverRunnerUrl( arguments.runner );
 
 		// Incorporate runner options
-		arguments.testboxUrl = addRunnerOptions( argumentCollection=arguments );
+		arguments.testboxUrl = addRunnerOptions( argumentCollection = arguments );
 
 		// Advise we are running
 		print.boldGreenLine( "Executing tests #testboxUrl# please wait..." ).toConsole();
@@ -130,10 +130,11 @@ component {
 			// Throw on error means this command will fail if the actual test runner blows up-- possibly on a compilation issue.
 			http url=testBoxURL throwonerror=true result="local.results";
 		} catch ( any e ) {
-			logger.error( "Error executing tests: #e.message# #e.detail#", e );
-			return error(
-				"Error executing tests: #CR# #e.message##CR##e.detail##CR##local.results.fileContent ?: ""#"
+			logger.error(
+				"Error executing tests: #e.message# #e.detail#",
+				e
 			);
+			return error( "Error executing tests: #CR# #e.message##CR##e.detail##CR##local.results.fileContent ?: ""#" );
 		}
 
 		// Trim whitespaces
@@ -196,8 +197,7 @@ component {
 		 **********************************************************************************/
 
 		// Do we have output formats? and the main report was json
-		if( isJSON( results.fileContent ) && len( arguments.outputFormats ) ){
-
+		if ( isJSON( results.fileContent ) && len( arguments.outputFormats ) ) {
 			print
 				.line()
 				.blueLine( "Output formats detected (#arguments.outputFormats#), building out reports..." )
@@ -229,7 +229,10 @@ component {
 			}
 
 			// write out the JSON
-			fileWrite( arguments.outputFile, results.fileContent );
+			fileWrite(
+				arguments.outputFile,
+				results.fileContent
+			);
 			print.boldGreenLine( "===> JSON Report written to #arguments.outputFile#!" );
 		}
 	}
@@ -282,16 +285,20 @@ component {
 	 *
 	 * @runner
 	 */
-	private function buildOutputFormats( outputFile, outputFormats, rawResults ){
+	private function buildOutputFormats(
+		outputFile,
+		outputFormats,
+		rawResults
+	){
 		// Convert results to any output report
-		var testbox = new testbox.system.TestBox();
+		var testbox    = new testbox.system.TestBox();
 		var testResult = new testbox.system.TestResult();
 
 		// populate the result object from the JSON
 		variables.wirebox
 			.getObjectPopulator()
 			.populateFromStruct(
-				target = testResult,
+				target  = testResult,
 				memento = deserializeJSON( arguments.rawResults )
 			);
 
@@ -307,10 +314,10 @@ component {
 					testbox
 						.buildReporter( arguments.format )
 						.runReport(
-							results 	= testResult,
-							testbox 	= testbox,
-							options 	= {},
-							justReturn 	= true
+							results    = testResult,
+							testbox    = testbox,
+							options    = {},
+							justReturn = true
 						)
 				);
 				print.blueLine( "=> #arguments.format# : #targetFile#" ).toConsole();
@@ -324,13 +331,18 @@ component {
 	 */
 	private function getOutputExtension( required format ){
 		switch ( arguments.format ) {
-			case "xml" : {
+			case "xml": {
 				return ".xml";
 			}
-			case "junit": case "antjunit" : {
+			case "junit":
+			case "antjunit": {
 				return "-junit.xml";
 			}
-			case "simple" : case "dot" : case "min": case "mintext": case "doc": {
+			case "simple":
+			case "dot":
+			case "min":
+			case "mintext":
+			case "doc": {
 				return "-#arguments.format#.html";
 			}
 			case "text": {
@@ -342,7 +354,7 @@ component {
 			case "codexwiki": {
 				return ".md";
 			}
-			default : {
+			default: {
 				return ".json";
 			}
 		}
@@ -407,14 +419,16 @@ component {
 	 * Ensure that TestBox is installed
 	 */
 	private function ensureTestBox( boolean testboxUseLocal = false ){
-		if( testboxUseLocal ) {
-			var targetPath = resolvePath( 'testbox' );
-			if( !directoryExists( targetPath ) ) {
-				error( "Uh-oh, you've asked to use a local copy of TestBox, but [#targetPath#] doesn't exist.", "Do you need to run [box install]?");
+		if ( testboxUseLocal ) {
+			var targetPath = resolvePath( "testbox" );
+			if ( !directoryExists( targetPath ) ) {
+				error(
+					"Uh-oh, you've asked to use a local copy of TestBox, but [#targetPath#] doesn't exist.",
+					"Do you need to run [box install]?"
+				);
 			}
-		} else  {
+		} else {
 			var targetPath = variables.moduleConfig.path & "/testbox";
-
 		}
 
 		// Add our mapping
