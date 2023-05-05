@@ -1,6 +1,6 @@
 {
     "name":"TestBox CLI",
-    "version":"1.0.0",
+    "version":"1.1.0",
     "location":"https://downloads.ortussolutions.com/ortussolutions/commandbox-modules/testbox-cli/@build.version@/testbox-cli-@build.version@.zip",
     "slug":"testbox-cli",
     "author":"Ortus Solutions, Corp",
@@ -13,35 +13,32 @@
     "bugs":"https://github.com/commandbox-modules/testbox-cli/issues",
     "shortDescription":"The TestBox CLI will assist you with running, reporting and generating tests",
     "type":"commandbox-modules",
-    "keywords": [],
+    "keywords":[],
     "license":[
         {
             "type":"Apache2",
             "url":"http://www.apache.org/licenses/LICENSE-2.0"
         }
     ],
-    "contributors":[
-    ],
-	"devDependencies":{
-		"commandbox-cfformat":"*",
+    "contributors":[],
+    "devDependencies":{
+        "commandbox-cfformat":"*",
         "commandbox-docbox":"*"
     },
-    "dependencies":{
-    },
-    "installPaths":{
-    },
-	"ignore":[
+    "dependencies":{},
+    "installPaths":{},
+    "ignore":[
         "**/.*",
         "test-harness",
-		"/server*.json"
+        "/server*.json"
     ],
     "scripts":{
-		"build:module":"task run taskFile=build/Build.cfc :projectName=`package show slug` :version=`package show version`",
-		"build:docs":"task run taskFile=build/Build.cfc target=docs :projectName=`package show slug` :version=`package show version`",
+        "build:module":"task run taskFile=build/Build.cfc :projectName=`package show slug` :version=`package show version`",
+        "build:docs":"task run taskFile=build/Build.cfc target=docs :projectName=`package show slug` :version=`package show version`",
         "format":"cfformat run commands,build,models,ModuleConfig.cfc ./.cfformat.json --overwrite",
         "format:watch":"cfformat watch commands,build,models,ModuleConfig.cfc ./.cfformat.json",
         "format:check":"cfformat check commands,build,models,ModuleConfig.cfc ./.cfformat.json",
         "release":"recipe build/release.boxr",
-        "setupTemplate": "task run taskFile=build/SetupTemplate.cfc"
+        "setupTemplate":"task run taskFile=build/SetupTemplate.cfc"
     }
 }
