@@ -1,17 +1,19 @@
 /**
- * Copyright Since 2005 ColdBox Framework by Luis Majano and Ortus Solutions, Corp
- * www.ortussolutions.com
- * ---
+ *********************************************************************************
+ * Copyright Since 2014 CommandBox by Ortus Solutions, Corp
+ * www.coldbox.org | www.ortussolutions.com
+ ********************************************************************************
+ *
+ * @author Brad Wood, Luis Majano
  */
 component {
 
-	this.cfmapping      = "@module_slug@";
-	this.modelNamespace = "@module_slug@";
+	this.name      = "TestBox CLI";
+	this.version   = "@build.version@+@build.number@";
+	this.cfmapping = "testbox-cli";
 
 	function configure(){
-		settings = {}
-
-		interceptors = []
+		settings = { templatesPath : modulePath & "/templates" }
 	}
 
 	function onLoad(){

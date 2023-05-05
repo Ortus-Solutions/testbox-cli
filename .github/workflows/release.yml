@@ -17,7 +17,7 @@ on:
           type: boolean
 
 env:
-  MODULE_ID: @MODULE_SLUG@
+  MODULE_ID: testbox-cli
   SNAPSHOT: ${{ inputs.snapshot || false }}
 
 jobs:
