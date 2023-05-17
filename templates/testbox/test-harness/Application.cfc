@@ -10,6 +10,7 @@ component{
 
 	// any mappings go here, we create one that points to the root called test.
 	this.mappings[ "/tests" ] = getDirectoryFromPath( getCurrentTemplatePath() );
+	this.mappings[ "/root" ] = expandPath( "/" );
 
 	// any orm definitions go here.
 
