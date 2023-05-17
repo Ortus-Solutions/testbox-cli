@@ -32,7 +32,6 @@
     },
 	"ignore":[
         "**/.*",
-        "test-harness",
 		"/server*.json"
     ],
     "scripts":{
