@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2023-07-28
+
 ### Added
 
 - TestBox 5 modules support
@@ -34,7 +36,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New `testbox apidocs` command to open the TestBox API Docs in your browser.
 - Initial Creation of this project
 
-[Unreleased]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.0.3...HEAD
+[Unreleased]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.1.0...HEAD
+
+[1.1.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.0.3...v1.1.0
 
 [1.0.3]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.0.2...v1.0.3
 
