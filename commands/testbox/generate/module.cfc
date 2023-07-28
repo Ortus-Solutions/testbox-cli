@@ -19,7 +19,10 @@ component {
 	 * @name The name of the module
 	 * @rootDirectory Where to create the module, by default it will be in the same folder as you call the command
 	 */
-	function run( required name, string rootDirectory = getCWD() ){
+	function run(
+		required name,
+		string rootDirectory = getCWD()
+	){
 		var moduleDirectory = resolvePath( arguments.rootDirectory ) & "/" & arguments.name;
 
 		// Validate directory
