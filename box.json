@@ -29,8 +29,7 @@
     "installPaths":{},
     "ignore":[
         "**/.*",
-        "test-harness",
-        "/server*.json"
+		"build/*"
     ],
     "scripts":{
         "build:module":"task run taskFile=build/Build.cfc :projectName=`package show slug` :version=`package show version`",
