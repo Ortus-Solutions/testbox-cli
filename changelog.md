@@ -13,13 +13,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- More fixes on runner not working
+
+* * *
+
+## [1.1.2] - 2023-08-16
+
+### Fixed
+
 - Missing another older injection
+
+* * *
 
 ## [1.1.1] - 2023-08-16
 
 ### Fixed
 
 - Invalid module name since we refactored, so all testing runners are failing.
+
+* * *
 
 ## [1.1.0] - 2023-07-28
 
@@ -28,17 +40,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - TestBox 5 modules support
 - New updated test harness
 
+* * *
+
 ## [1.0.3] - 2023-05-17
 
 - Invalid version fixed
+
+* * *
 
 ## [1.0.2] - 2023-05-17
 
 - Invalid version fixed
 
+* * *
+
 ## [1.0.1] - 2023-05-17
 
 - Invalid version fixed
+
+* * *
 
 ## [1.0.0] - 2023-05-17
 

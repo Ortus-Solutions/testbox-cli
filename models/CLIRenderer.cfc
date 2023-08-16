@@ -27,14 +27,14 @@ component {
 	 */
 	function render( print, testData, verbose ){
 		var thisColor = getAggregatedColor(
-			testData.totalError,
-			testData.totalFail,
+			arguments.testData.totalError,
+			arguments.testData.totalFail,
 			0
 		);
 
 		var didPrint = false;
-		for ( thisBundle in testData.bundleStats ) {
-			if ( ( thisBundle.totalFail + thisBundle.totalError ) == 0 && !verbose ) {
+		for ( var thisBundle in arguments.testData.bundleStats ) {
+			if ( ( thisBundle.totalFail + thisBundle.totalError ) == 0 && !arguments.verbose ) {
 				continue;
 			}
 
@@ -51,7 +51,7 @@ component {
 				thisStatus = "skipped";
 			}
 
-			variables.print
+			arguments.print
 				.line()
 				.line(
 					"#getIndicator( thisStatus )##thisBundle.path# (#thisBundle.totalDuration# ms)",
@@ -65,7 +65,7 @@ component {
 
 			// Check if the bundle threw a global exception
 			if ( !isSimpleValue( thisBundle.globalException ) ) {
-				variables.print
+				arguments.print
 					.line(
 						"GLOBAL BUNDLE EXCEPTION",
 						COLOR.ERROR
@@ -95,7 +95,7 @@ component {
 						);
 
 						// code print for first stack frame if supported by the CFML engine
-						if ( arguments.index == 1 && item.keyExists( "codePrintPlain" ) ) {
+						if ( index == 1 && item.keyExists( "codePrintPlain" ) ) {
 							print.line().line( item.codePrintPlain );
 						}
 					}
@@ -103,7 +103,7 @@ component {
 
 				// ACF has an array for the stack trace
 				if ( isSimpleValue( thisBundle.globalException.stacktrace ) && !errorStack.len() ) {
-					variables.print
+					arguments.print
 						.line(
 							"---------------------------------------------------------------------------------",
 							COLOR.ERROR
@@ -124,7 +124,7 @@ component {
 						.line( "END STACKTRACE", COLOR.ERROR );
 				}
 
-				print.line(
+				arguments.print.line(
 					"---------------------------------------------------------------------------------",
 					COLOR.ERROR
 				);
@@ -136,56 +136,60 @@ component {
 					suiteStats  = suiteStats,
 					bundleStats = thisBundle,
 					level       = 1,
-					print       = print,
-					verbose     = verbose
+					print       = arguments.print,
+					verbose     = arguments.verbose
 				);
 			}
 		}
 
 		// Print Summary
 		// cfformat-ignore-start
-		variables.print
+		arguments.print
 			.line()
 			.line( "╔═════════════════════════════════════════════════════════════════════╗", thisColor )
 			.line( "║ Passed  ║ Failed  ║ Errored ║ Skipped ║ Bundles ║ Suites  ║ Specs   ║", thisColor )
 			.line( "╠═════════════════════════════════════════════════════════════════════╣", thisColor )
 			.line(
-				"║ #headerCell( testData.totalPass )# ║ #headerCell( testData.totalFail )# ║ #headerCell( testData.totalError )# ║ #headerCell( testData.totalSkipped )# ║ #headerCell( testData.totalBundles )# ║ #headerCell( testData.totalSuites )# ║ #headerCell( testData.totalSpecs )# ║",
+				"║ #headerCell( arguments.testData.totalPass )# ║ #headerCell( arguments.testData.totalFail )# ║ #headerCell( arguments.testData.totalError )# ║ #headerCell( arguments.testData.totalSkipped )# ║ #headerCell( arguments.testData.totalBundles )# ║ #headerCell( arguments.testData.totalSuites )# ║ #headerCell( arguments.testData.totalSpecs )# ║",
 				thisColor
 				)
 			.line( "╚═════════════════════════════════════════════════════════════════════╝", thisColor )
 			.line()
-			.line( "TestBox 	" & ( !isNull( testData.version ) ? "v#testData.version#" : "" ) )
-			.line( "CFML Engine	" & ( !isNull( testData.cfmlEngine ) ? "#testData.cfmlEngine# v#testData.cfmlEngineVersion#" : "" ) )
-			.line( "Duration 	#numberFormat( testData.totalDuration )#ms" )
-			.line( "Labels 		" & ( arrayLen( testData.labels ) ? arrayToList( testData.labels ) : "---" ) );
+			.line( "TestBox 	" & ( !isNull( arguments.testData.version ) ? "v#arguments.testData.version#" : "" ) )
+			.line( "CFML Engine	" & ( !isNull( arguments.testData.cfmlEngine ) ? "#arguments.testData.cfmlEngine# v#arguments.testData.cfmlEngineVersion#" : "" ) )
+			.line( "Duration 	#numberFormat( arguments.testData.totalDuration )#ms" )
+			.line( "Labels 		" & ( arrayLen( arguments.testData.labels ) ? arrayToList( arguments.testData.labels ) : "---" ) );
 		// cfformat-ignore-end
 
-		if ( isDefined( "testData.coverage.enabled" ) && testData.coverage.enabled ) {
-			variables.print
+		if ( isDefined( "arguments.testData.coverage.enabled" ) && arguments.testData.coverage.enabled ) {
+			arguments.print
 				.line(
-					"Coverage 	#testData.coverage.data.stats.totalCoveredLines# / #testData.coverage.data.stats.totalExecutableLines# LOC (#numberFormat(
-						testData.coverage.data.stats.percTotalCoverage * 100,
+					"Coverage 	#arguments.testData.coverage.data.stats.totalCoveredLines# / #arguments.testData.coverage.data.stats.totalExecutableLines# LOC (#numberFormat(
+						arguments.testData.coverage.data.stats.percTotalCoverage * 100,
 						"9.9"
 					)#%) Covered"
 				)
 				.line();
-			if ( len( testData.coverage.data.sonarQubeResults ) ) {
-				print.blueLine( "Coverage: SonarQube file written to [#testData.coverage.data.sonarQubeResults#]" );
+			if ( len( arguments.testData.coverage.data.sonarQubeResults ) ) {
+				arguments.print.blueLine(
+					"Coverage: SonarQube file written to [#arguments.testData.coverage.data.sonarQubeResults#]"
+				);
 			}
-			if ( len( testData.coverage.data.browserResults ) ) {
-				print.blueLine( "Coverage: Browser written to [#testData.coverage.data.browserResults#]" );
+			if ( len( arguments.testData.coverage.data.browserResults ) ) {
+				arguments.print.blueLine(
+					"Coverage: Browser written to [#arguments.testData.coverage.data.browserResults#]"
+				);
 			}
 		}
 
 		// Skip this redundant line if no specs printed above in the previous suite
 		if ( didPrint ) {
-			print.line();
+			arguments.print.line();
 		}
 
 		// If verbose print the final footer report
-		if ( verbose ) {
-			variables.print
+		if ( arguments.verbose ) {
+			arguments.print
 				.text(
 					"#getIndicator( "passed" )#Passed",
 					COLOR.PASS
@@ -242,7 +246,7 @@ component {
 		required verbose
 	){
 		// Return if not in verbose mode nd no errors
-		if ( ( arguments.suiteStats.totalFail + arguments.suiteStats.totalError ) == 0 && !verbose ) {
+		if ( ( arguments.suiteStats.totalFail + arguments.suiteStats.totalError ) == 0 && !arguments.verbose ) {
 			return false;
 		}
 
@@ -264,7 +268,7 @@ component {
 				listFindNoCase(
 					"failed,exception,error",
 					local.thisSpec.status
-				) == 0 && !verbose
+				) == 0 && !arguments.verbose
 			) {
 				continue;
 			}
@@ -318,7 +322,7 @@ component {
 
 						// code print for first stack frame if supported by the CFML engine
 						if ( arguments.index == 1 && item.keyExists( "codePrintPlain" ) ) {
-							variables.print
+							arguments.print
 								.line()
 								.line(
 									"#repeatString( "    ", level + 2 )##item.codePrintPlain.replace(
@@ -340,8 +344,8 @@ component {
 					local.nestedSuite,
 					arguments.bundleStats,
 					arguments.level + 1,
-					print,
-					verbose
+					arguments.print,
+					arguments.verbose
 				)
 				printedAtLeastOneLine = printedAtLeastOneLine || didPrint;
 			}
