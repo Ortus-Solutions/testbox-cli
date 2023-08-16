@@ -58,8 +58,8 @@ component {
 
 	// DI
 	property name="packageService" inject="PackageService";
-	property name="testingService" inject="TestingService@testbox-commands";
-	property name="CLIRenderer"    inject="CLIRenderer@testbox-commands";
+	property name="testingService" inject="TestingService@testbox-cli";
+	property name="CLIRenderer"    inject="CLIRenderer@testbox-cli";
 	property name="serverService"  inject="ServerService";
 	property name="moduleConfig"   inject="box:moduleConfig:testbox-commands";
 
