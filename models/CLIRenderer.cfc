@@ -171,10 +171,14 @@ component {
 				)
 				.line();
 			if ( len( arguments.testData.coverage.data.sonarQubeResults ) ) {
-				arguments.print.blueLine( "Coverage: SonarQube file written to [#arguments.testData.coverage.data.sonarQubeResults#]" );
+				arguments.print.blueLine(
+					"Coverage: SonarQube file written to [#arguments.testData.coverage.data.sonarQubeResults#]"
+				);
 			}
 			if ( len( arguments.testData.coverage.data.browserResults ) ) {
-				arguments.print.blueLine( "Coverage: Browser written to [#arguments.testData.coverage.data.browserResults#]" );
+				arguments.print.blueLine(
+					"Coverage: Browser written to [#arguments.testData.coverage.data.browserResults#]"
+				);
 			}
 		}
 
