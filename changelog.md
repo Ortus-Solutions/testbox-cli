@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Missing another older injection
+
+## [1.1.1] - 2023-08-16
+
+### Fixed
+
 - Invalid module name since we refactored, so all testing runners are failing.
 
 ## [1.1.0] - 2023-07-28
