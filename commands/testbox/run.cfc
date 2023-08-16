@@ -61,7 +61,7 @@ component {
 	property name="testingService" inject="TestingService@testbox-cli";
 	property name="CLIRenderer"    inject="CLIRenderer@testbox-cli";
 	property name="serverService"  inject="ServerService";
-	property name="moduleConfig"   inject="box:moduleConfig:testbox-commands";
+	property name="moduleConfig"   inject="box:moduleConfig:testbox-cli";
 
 	// Default Runner Options
 	variables.RUNNER_OPTIONS = {
