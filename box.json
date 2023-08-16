@@ -1,6 +1,6 @@
 {
     "name":"TestBox CLI",
-    "version":"1.1.2",
+    "version":"1.2.0",
     "location":"https://downloads.ortussolutions.com/ortussolutions/commandbox-modules/testbox-cli/@build.version@/testbox-cli-@build.version@.zip",
     "slug":"testbox-cli",
     "author":"Ortus Solutions, Corp",
