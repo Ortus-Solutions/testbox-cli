@@ -423,7 +423,7 @@ component {
 	private function ensureTestBox( boolean testboxUseLocal = true ){
 		// Where it should go in module
 		var testBoxPath = variables.moduleConfig.path & "/testbox";
-		var modulePath = variables.moduleConfig.path;
+		var modulePath  = variables.moduleConfig.path;
 
 		// Check if installed locally
 		if ( arguments.testboxUseLocal ) {
@@ -433,17 +433,13 @@ component {
 		if ( !directoryExists( testBoxPath ) ) {
 			variables.print
 				.blackOnWheat1( " WARN  " )
-				.line(
-					" Uh-oh, TestBox could not be found locally [#testBoxPath#] or in the CLI path."
-				)
+				.line( " Uh-oh, TestBox could not be found locally [#testBoxPath#] or in the CLI path." )
 				.green1onDodgerBlue2( " INFO  " )
-				.line( " We will install a local version in the CLI path [#modulePath#] for you.")
+				.line( " We will install a local version in the CLI path [#modulePath#] for you." )
 				.line()
 				.toConsole();
 
-			command( "install" )
-				.params( "testbox", modulePath )
-				.run();
+			command( "install" ).params( "testbox", modulePath ).run();
 		}
 
 		// Add our mapping
