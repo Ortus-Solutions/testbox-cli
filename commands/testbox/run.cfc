@@ -94,7 +94,7 @@ component {
 	 * @outputFile  We will store the results in this output file as well as presenting it to you.
 	 * @outputFormats A list of output reporter to produce using the runner's JSON results only. Available formats are: json,xml,junit,antjunit,simple,dot,doc,min,mintext,doc,text,tap,codexwiki
 	 * @verbose Display extra details including passing and skipped tests.
-	 * @testboxUseLocal When using outputformats, prefer testbox installation in current working directory over bundled version.
+	 * @testboxUseLocal When using outputformats, prefer testbox installation in current working directory over bundled version. If none found, it tries to download one
 	 **/
 	function run(
 		string runner = "",
@@ -111,7 +111,7 @@ component {
 		string outputFile,
 		string outputFormats = "",
 		boolean verbose,
-		boolean testboxUseLocal = false
+		boolean testboxUseLocal = true
 	){
 		// Ensure TestBox For reporting and conversions
 		ensureTestBox( arguments.testboxUseLocal );
@@ -417,22 +417,37 @@ component {
 
 	/**
 	 * Ensure that TestBox is installed
+	 *
+	 * @testboxUseLocal Use a local version of TestBox or in the execution path. Defaults to true, else it tries to download it
 	 */
-	private function ensureTestBox( boolean testboxUseLocal = false ){
-		if ( testboxUseLocal ) {
-			var targetPath = resolvePath( "testbox" );
-			if ( !directoryExists( targetPath ) ) {
-				error(
-					"Uh-oh, you've asked to use a local copy of TestBox, but [#targetPath#] doesn't exist.",
-					"Do you need to run [box install]?"
-				);
-			}
-		} else {
-			var targetPath = variables.moduleConfig.path & "/testbox";
+	private function ensureTestBox( boolean testboxUseLocal = true ){
+		// Where it should go in module
+		var testBoxPath = variables.moduleConfig.path & "/testbox";
+		var modulePath  = variables.moduleConfig.path;
+
+		// Check if installed locally
+		if ( arguments.testboxUseLocal ) {
+			testBoxPath = resolvePath( "testbox" );
+		}
+
+		if ( !directoryExists( testBoxPath ) ) {
+			variables.print
+				.blackOnWheat1( " WARN  " )
+				.line( " Uh-oh, TestBox could not be found locally [#testBoxPath#] or in the CLI path." )
+				.green1onDodgerBlue2( " INFO  " )
+				.line( " We will install a local version in the CLI path [#modulePath#] for you." )
+				.line()
+				.toConsole();
+
+			command( "install" ).params( "testbox", modulePath ).run();
 		}
 
 		// Add our mapping
-		variables.fileSystemUtil.createMapping( "/testbox", targetPath );
+		variables.fileSystemUtil.createMapping( "/testbox", testBoxPath );
+		// variables.print
+		// 	.green1onDodgerBlue2( " INFO  " )
+		// 	.line( " Created [/testbox] mapping at [#testBoxPath#]" )
+		// 	.toConsole();
 	}
 
 }
