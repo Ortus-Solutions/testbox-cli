@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- If a localized version of TestBox cannot be found, then it installs one for you
+
+### Fixed
+
+- More fixes on runner not working
+- Localized `testbox` location finding for `outputFormats` was using the wrong path
+
 ## [1.1.3] - 2023-08-16
 
 ### Fixed

@@ -25,11 +25,16 @@
         "commandbox-cfformat":"*",
         "commandbox-docbox":"*"
     },
-    "dependencies":{},
-    "installPaths":{},
+    "dependencies":{
+        "testbox":"^5.3.0+5"
+    },
+    "installPaths":{
+        "testbox":"testbox/"
+    },
     "ignore":[
         "**/.*",
-        "build/*"
+        "build/*",
+        "tests"
     ],
     "scripts":{
         "build:module":"task run taskFile=build/Build.cfc :projectName=`package show slug` :version=`package show version`",
