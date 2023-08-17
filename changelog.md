@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2023-08-17
+
 ### Added
 
 - If a localized version of TestBox cannot be found, then it installs one for you
@@ -77,7 +79,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New `testbox apidocs` command to open the TestBox API Docs in your browser.
 - Initial Creation of this project
 
-[Unreleased]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.1.3...HEAD
+[Unreleased]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.2.0...HEAD
+
+[1.2.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.1.3...v1.2.0
 
 [1.1.3]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.1.2...v1.1.3
 
