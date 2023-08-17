@@ -440,7 +440,7 @@ component {
 				.toConsole();
 
 			command( "install" ).params( "testbox", modulePath ).run();
-            testBoxPath = modulePath & "/testbox"
+			testBoxPath = modulePath & "/testbox"
 		}
 
 		// Add our mapping
