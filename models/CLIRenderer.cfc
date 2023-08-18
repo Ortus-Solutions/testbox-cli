@@ -321,8 +321,8 @@ component {
 						);
 
 						// code print for first stack frame if supported by the CFML engine
-						if ( arguments.index == 1 && item.keyExists( "codePrintPlain" ) ) {
-							arguments.print
+						if ( index == 1 && item.keyExists( "codePrintPlain" ) ) {
+							print
 								.line()
 								.line(
 									"#repeatString( "    ", level + 2 )##item.codePrintPlain.replace(
