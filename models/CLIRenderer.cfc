@@ -142,6 +142,12 @@ component {
 			}
 		}
 
+		var thisColor = getAggregatedColor(
+			arguments.testData.totalError,
+			arguments.testData.totalFail,
+			0
+		);
+		
 		// Print Summary
 		// cfformat-ignore-start
 		arguments.print
