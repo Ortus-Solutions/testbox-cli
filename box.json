@@ -1,16 +1,16 @@
 {
     "name":"TestBox CLI",
-    "version":"1.2.2",
+    "version":"1.3.0",
     "location":"https://downloads.ortussolutions.com/ortussolutions/commandbox-modules/testbox-cli/@build.version@/testbox-cli-@build.version@.zip",
     "slug":"testbox-cli",
     "author":"Ortus Solutions, Corp",
     "homepage":"https://www.forgebox.io/view/testbox-cli",
-    "documentation":"https://github.com/commandbox-modules/wiki",
+    "documentation":"https://github.com/Ortus-Solutions/testbox-cli/wiki",
     "repository":{
         "type":"git",
-        "url":"https://github.com/commandbox-modules/testbox-cli"
+        "url":"https://github.com/Ortus-Solutions/testbox-cli"
     },
-    "bugs":"https://github.com/commandbox-modules/testbox-cli/issues",
+    "bugs":"https://github.com/Ortus-Solutions/testbox-cli/issues",
     "shortDescription":"The TestBox CLI will assist you with running, reporting and generating tests",
     "type":"commandbox-modules",
     "keywords":[],
