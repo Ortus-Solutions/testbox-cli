@@ -147,7 +147,7 @@ component {
 			arguments.testData.totalFail,
 			0
 		);
-		
+
 		// Print Summary
 		// cfformat-ignore-start
 		arguments.print
