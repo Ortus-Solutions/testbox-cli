@@ -425,9 +425,12 @@ component {
 		var testBoxPath = variables.moduleConfig.path & "/testbox";
 		var modulePath  = variables.moduleConfig.path;
 
+		var serverDetails = variables.serverService.resolveServerDetails( {} );
+		var serverInfo    = serverDetails.serverInfo;
+		
 		// Check if installed locally
 		if ( arguments.testboxUseLocal ) {
-			testBoxPath = resolvePath( "testbox" );
+			testBoxPath = resolvePath( "testbox", "#serverInfo.webroot#" );
 		}
 
 		if ( !directoryExists( testBoxPath ) ) {
