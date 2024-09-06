@@ -9,6 +9,9 @@
  */
 component {
 
+	property name="JSONPrettyPrint" inject="provider:JSONPrettyPrint";
+	property name="JSONService"     inject="JSONService";
+
 	processingdirective pageEncoding="UTF-8";
 
 	variables.HEADER_CELL_CHARS = 7;
@@ -296,6 +299,23 @@ component {
 					"#repeatString( "    ", arguments.level + 2 )#-> Failure: #local.thisSpec.failMessage##chr( 13 )#",
 					COLOR.FAIL
 				);
+
+				param local.thisSpec.debugBuffer = [];
+				if ( verbose && !local.thisSpec.debugBuffer.isEmpty() ) {
+					print.text( repeatString( "    ", level + 2 ) ).boldWhiteOnGreenLine( "Debug Buffer:" );
+					print
+						.line(
+							JSONPrettyPrint
+								.formatJSON(
+									json       = local.thisSpec.debugBuffer,
+									ansiColors = JSONService.getANSIColors()
+								)
+								.listToArray( chr( 10 ) )
+								.map( ( line ) => "#repeatString( "    ", level + 2 )##line#" )
+								.toList( chr( 10 ) )
+						)
+						.line();
+				}
 			}
 
 			if ( local.thisSpec.status == "error" ) {
@@ -340,6 +360,23 @@ component {
 						}
 					}
 				} );
+
+				param local.thisSpec.debugBuffer = [];
+				if ( verbose && !local.thisSpec.debugBuffer.isEmpty() ) {
+					print.text( repeatString( "    ", level + 2 ) ).boldWhiteOnGreenLine( "Debug Buffer:" );
+					print
+						.line(
+							JSONPrettyPrint
+								.formatJSON(
+									json       = local.thisSpec.debugBuffer,
+									ansiColors = JSONService.getANSIColors()
+								)
+								.listToArray( chr( 10 ) )
+								.map( ( line ) => "#repeatString( "    ", level + 2 )##line#" )
+								.toList( chr( 10 ) )
+						)
+						.line();
+				}
 			}
 		}
 
