@@ -10,7 +10,7 @@
 component {
 
 	property name="JSONPrettyPrint" inject="provider:JSONPrettyPrint";
-	property name='JSONService'		inject='JSONService';
+	property name="JSONService"     inject="JSONService";
 
 	processingdirective pageEncoding="UTF-8";
 
@@ -303,13 +303,18 @@ component {
 				param local.thisSpec.debugBuffer = [];
 				if ( verbose && !local.thisSpec.debugBuffer.isEmpty() ) {
 					print.text( repeatString( "    ", level + 2 ) ).boldWhiteOnGreenLine( "Debug Buffer:" );
-					print.line(
-						JSONPrettyPrint.formatJSON(
-							json = local.thisSpec.debugBuffer,
-							ansiColors = JSONService.getANSIColors()
-						).listToArray( chr( 10 ) )
-						.map( ( line ) => "#repeatString( "    ", level + 2 )##line#" ).toList( chr( 10 ) )
-					).line();
+					print
+						.line(
+							JSONPrettyPrint
+								.formatJSON(
+									json       = local.thisSpec.debugBuffer,
+									ansiColors = JSONService.getANSIColors()
+								)
+								.listToArray( chr( 10 ) )
+								.map( ( line ) => "#repeatString( "    ", level + 2 )##line#" )
+								.toList( chr( 10 ) )
+						)
+						.line();
 				}
 			}
 
@@ -359,13 +364,18 @@ component {
 				param local.thisSpec.debugBuffer = [];
 				if ( verbose && !local.thisSpec.debugBuffer.isEmpty() ) {
 					print.text( repeatString( "    ", level + 2 ) ).boldWhiteOnGreenLine( "Debug Buffer:" );
-					print.line(
-						JSONPrettyPrint.formatJSON(
-							json = local.thisSpec.debugBuffer,
-							ansiColors = JSONService.getANSIColors()
-						).listToArray( chr( 10 ) )
-						.map( ( line ) => "#repeatString( "    ", level + 2 )##line#" ).toList( chr( 10 ) )
-					).line();
+					print
+						.line(
+							JSONPrettyPrint
+								.formatJSON(
+									json       = local.thisSpec.debugBuffer,
+									ansiColors = JSONService.getANSIColors()
+								)
+								.listToArray( chr( 10 ) )
+								.map( ( line ) => "#repeatString( "    ", level + 2 )##line#" )
+								.toList( chr( 10 ) )
+						)
+						.line();
 				}
 			}
 		}
