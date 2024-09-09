@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Bundle `displayName` now showing up on the reports
 - Updated the `run` command with tons of docs
 - Mutually exclusive options for `run` command which never existed before for `bundles` and `directory`
 

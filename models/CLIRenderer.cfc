@@ -57,7 +57,7 @@ component {
 			arguments.print
 				.line()
 				.line(
-					"#getIndicator( thisStatus )##thisBundle.path# (#thisBundle.totalDuration# ms)",
+					"#getIndicator( thisStatus )##thisBundle.name# (#thisBundle.totalDuration# ms)",
 					thisColor
 				)
 				.line(
