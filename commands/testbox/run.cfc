@@ -434,8 +434,8 @@ component {
 	 */
 	private function ensureTestBox( boolean testboxUseLocal = true ){
 		// Where it should go in the module installed locally
-		var testBoxPath = variables.moduleConfig.path & "/testbox";
-		var modulePath  = variables.moduleConfig.path;
+		var testBoxPath   = variables.moduleConfig.path & "/testbox";
+		var modulePath    = variables.moduleConfig.path;
 		var serverDetails = variables.serverService.resolveServerDetails( {} );
 		var serverInfo    = serverDetails.serverInfo;
 
@@ -443,7 +443,7 @@ component {
 		if ( arguments.testboxUseLocal ) {
 			// Check if we have a local version
 			var localTestBoxPath = resolvePath( "testbox", serverInfo.webroot );
-			if( directoryExists( localTestBoxPath ) ){
+			if ( directoryExists( localTestBoxPath ) ) {
 				testBoxPath = localTestBoxPath;
 			}
 		}
