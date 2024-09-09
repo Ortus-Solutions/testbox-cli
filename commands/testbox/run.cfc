@@ -247,7 +247,7 @@ component {
 	private function addRunnerOptions(){
 		// Mutex options: If we have a directory, we can't have bundles
 		if ( len( arguments.directory ) ) {
-			arguments[ "bundles" ]   = "";
+			arguments[ "bundles" ] = "";
 		}
 		// Mutex options: If we have bundles, we can't have directory
 		if ( len( arguments.bundles ) ) {
@@ -440,7 +440,7 @@ component {
 		var serverInfo    = serverDetails.serverInfo;
 
 		// If using local, check if we have a local version first
-		if( arguments.testboxUseLocal ){
+		if ( arguments.testboxUseLocal ) {
 			// Check if we have a local version
 			var localTestBoxPath = resolvePath( "testbox", serverInfo.webroot );
 			if( directoryExists( localTestBoxPath ) ){
