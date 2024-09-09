@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Bugs
 
 - Using the `useTestBoxLocal` was not working correctly and re-downloading TestBox every time
+- TestBox run should use webroot when resolving testbox location in ensureTestBox()
 
 ### Added
 

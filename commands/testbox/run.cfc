@@ -436,11 +436,13 @@ component {
 		// Where it should go in the module installed locally
 		var testBoxPath = variables.moduleConfig.path & "/testbox";
 		var modulePath  = variables.moduleConfig.path;
+		var serverDetails = variables.serverService.resolveServerDetails( {} );
+		var serverInfo    = serverDetails.serverInfo;
 
 		// If using local, check if we have a local version first
 		if( arguments.testboxUseLocal ){
 			// Check if we have a local version
-			var localTestBoxPath = resolvePath( "testbox" );
+			var localTestBoxPath = resolvePath( "testbox", serverInfo.webroot );
 			if( directoryExists( localTestBoxPath ) ){
 				testBoxPath = localTestBoxPath;
 			}
