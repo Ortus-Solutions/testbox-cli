@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Bugs
+
+- Using the `useTestBoxLocal` was not working correctly and re-downloading TestBox every time
+
+### Added
+
+- Updated the `run` command with tons of docs
+- Mutually exclusive options for `run` command which never existed before for `bundles` and `directory`
+
 ## [1.4.0] - 2024-02-29
 
 ### Added
