@@ -28,10 +28,7 @@
  * This command will run in the foreground until you stop it.  When you are ready to shut down the watcher, press Ctrl+C.
  *
  **/
-component {
-
-	// DI
-	property name="packageService" inject="PackageService";
+component extends="testboxCLI.models.BaseCommand" {
 
 	variables.WATCH_DELAY = 500;
 	variables.PATHS       = "**.cfc";
@@ -65,7 +62,7 @@ component {
 		string testSpecs
 	){
 		// Get testbox options from package descriptor
-		var boxOptions = variables.packageService.readPackageDescriptor( getCWD() ).testbox;
+		var boxOptions = getTestBoxDescriptor( getCWD() );
 
 		var getOptionsWatchers = function(){
 			// Return to List

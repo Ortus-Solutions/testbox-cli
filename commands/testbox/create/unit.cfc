@@ -7,19 +7,19 @@
  * {code}
  *
  **/
-component {
-
-	property name="settings" inject="box:modulesettings:testbox-cli";
+component extends="testboxCLI.models.BaseCommand" {
 
 	/**
-	 * @name.hint Name of the xUnit bundle to create without the .cfc. For packages, specify name as 'myPackage/MyTest'
-	 * @open.hint Open the file once it is created
-	 * @directory.hint The base directory to create your CFC in and creates the directory if it does not exist.
+	 * @name Name of the xUnit bundle to create without the .cfc. For packages, specify name as 'myPackage/MyTest'
+	 * @open Open the file once it is created
+	 * @directory The base directory to create your CFC in and creates the directory if it does not exist.
+	 * @boxlang   Is this a boxlang project? else it is a CFML project
 	 **/
 	function run(
 		required name,
-		boolean open = false,
-		directory    = getCWD()
+		boolean open    = false,
+		directory       = getCWD(),
+		boolean boxlang = isBoxLangProject( getCWD() )
 	){
 		// Allow dot-delimited paths
 		arguments.name = replace( arguments.name, ".", "/", "all" );
@@ -46,7 +46,7 @@ component {
 		print.line();
 
 		// Read in Templates
-		var content = fileRead( "#variables.settings.templatesPath#/testbox/unit.txt" );
+		var content = fileRead( "#variables.settings.templatesPath#/#arguments.boxlang ? "bx" : "cfml"#/unit.txt" );
 
 		// Write out BDD Spec
 		var thisPath= "#arguments.directory#/#name#.cfc";

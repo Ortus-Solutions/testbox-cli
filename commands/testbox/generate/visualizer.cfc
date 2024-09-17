@@ -11,9 +11,7 @@
  * testbox create visualizer C:\myApp
  * {code}
  */
-component {
-
-	property name="settings" inject="box:modulesettings:testbox-cli";
+component extends="testboxCLI.models.BaseCommand" {
 
 	/**
 	 * @directory The base directory to create your test visualizer
@@ -22,13 +20,16 @@ component {
 		// This will make each directory canonical and absolute
 		arguments.directory = resolvePath( arguments.directory & "/tests/test-visualizer" );
 
+		// Make sure we have the latest TestBox for assets
+		ensureTestBox( false );
+
 		// Validate directory
 		if ( !directoryExists( arguments.directory ) ) {
 			directoryCreate( arguments.directory );
 
 			// Copy template
 			directoryCopy(
-				"#variables.settings.templatesPath#/testbox/test-visualizer/",
+				expandPath( "/testbox/test-visualizer" ),
 				arguments.directory,
 				true
 			);

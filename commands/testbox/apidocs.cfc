@@ -16,7 +16,6 @@ component {
 	 **/
 	function run(){
 		var docsUri = "https://apidocs.ortussolutions.com/##/testbox";
-
 		command( "browse" ).params( uri: docsUri ).run();
 	}
 

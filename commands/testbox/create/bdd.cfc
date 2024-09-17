@@ -7,20 +7,23 @@
  * {code}
  *
  **/
-component {
-
-	property name="settings" inject="box:modulesettings:testbox-cli";
+component extends="testboxCLI.models.BaseCommand" {
 
 	/**
-	 * @name.hint Name of the BDD spec to create without the .cfc. For packages, specify name as 'myPackage/myBDDSpec'
-	 * @open.hint Open the file once it is created
-	 * @directory.hint The base directory to create your BDD spec in and creates the directory if it does not exist.
+	 * @name Name of the BDD spec to create without the .cfc. For packages, specify name as 'myPackage/myBDDSpec'
+	 * @open Open the file once it is created
+	 * @directory The base directory to create your BDD spec in and creates the directory if it does not exist.
+	 * @boxlang   Is this a boxlang project? else it is a CFML project
 	 **/
 	function run(
 		required name,
-		boolean open = false,
-		directory    = getCWD()
+		boolean open    = false,
+		directory       = getCWD(),
+		boolean boxlang = isBoxLangProject( getCWD() )
 	){
+		isBoxLangProject();
+		return;
+
 		// Allow dot-delimited paths
 		arguments.name = replace( arguments.name, ".", "/", "all" );
 
@@ -46,7 +49,7 @@ component {
 		print.line();
 
 		// Read in Templates
-		var BDDContent = fileRead( "#variables.settings.templatesPath#/testbox/bdd.txt" );
+		var BDDContent = fileRead( "#variables.settings.templatesPath#/#arguments.boxlang ? "bx" : "cfml"#/bdd.txt" );
 
 		// Write out BDD Spec
 		var BDDPath= "#arguments.directory#/#name#.cfc";

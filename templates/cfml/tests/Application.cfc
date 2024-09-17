@@ -1,11 +1,11 @@
 /**
  * Copyright Since 2005 Ortus Solutions, Corp
- * www.coldbox.org | www.luismajano.com | www.ortussolutions.com | www.gocontentbox.org
- **************************************************************************************
+ * www.ortussolutions.com
+ * *************************************************************************************
  */
 component {
 
-	this.name              = "A TestBox Browser";
+	this.name              = "A TestBox Runner Suite";
 	// any other application.cfc stuff goes below:
 	this.sessionManagement = true;
 

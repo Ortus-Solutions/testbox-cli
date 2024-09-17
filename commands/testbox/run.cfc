@@ -54,14 +54,11 @@
  * {code}
  *
  **/
-component {
+component extends="testboxCLI.models.BaseCommand" {
 
 	// DI
-	property name="packageService" inject="PackageService";
 	property name="testingService" inject="TestingService@testbox-cli";
 	property name="CLIRenderer"    inject="CLIRenderer@testbox-cli";
-	property name="serverService"  inject="ServerService";
-	property name="moduleConfig"   inject="box:moduleConfig:testbox-cli";
 
 	// Default Runner Options
 	variables.RUNNER_OPTIONS = {
@@ -81,16 +78,16 @@ component {
 	 * Ability to execute TestBox tests
 	 *
 	 * @runner      The URL or shortname of the runner to use, if it uses a short name we look in your box.json
-	 * @bundles     The path or list of paths of the spec bundle CFCs to run and test
-	 * @directory   The directory mapping to test: directory = the path to the directory using dot notation (myapp.testing.specs)
-	 * @recurse     Recurse the directory mapping or not, by default it does
-	 * @reporter    The type of reporter to use for the results, by default is uses our 'simple' report. You can pass in a core reporter string type or a class path to the reporter to use.
+	 * @bundles     The path or list of paths of the spec bundle CFCs to run and test ONLY
+	 * @directory   The directory to use to discover test bundles and specs to test. Mutually exclusive with <code>bundles</code>. Example: <code>directory=tests.specs</code>
+	 * @recurse     Recurse the directory mapping or not. Defaults to true.
+	 * @reporter    The type of reporter to use for the results, by default is uses our 'json' reporter. You can pass in a core reporter string type or a class path to the reporter to use.
 	 * @labels      The list of labels that a suite or spec must have in order to execute.
 	 * @excludes    The list of labels that a suite or spec must not have in order to execute.
 	 * @options     Add adhoc URL options to the runner as options:name=value options:name2=value2
-	 * @testBundles A list or array of bundle names that are the ones that will be executed ONLY!
-	 * @testSuites  A list of suite names that are the ones that will be executed ONLY!
-	 * @testSpecs   A list of test names that are the ones that will be executed ONLY!
+	 * @testBundles A list or array of bundle names that are the ones that will be focused on for execution based on the <code>bundles</code> or <code>directory</code> arguments.
+	 * @testSuites  A list of suite names that are the ones that will be focused on for execution based on the <code>bundles</code> or <code>directory</code> arguments.
+	 * @testSpecs   A list of test names that are the ones that will be focused on for execution based on the <code>bundles</code> or <code>directory</code> arguments.
 	 * @outputFile  We will store the results in this output file as well as presenting it to you.
 	 * @outputFormats A list of output reporter to produce using the runner's JSON results only. Available formats are: json,xml,junit,antjunit,simple,dot,doc,min,mintext,doc,text,tap,codexwiki
 	 * @verbose Display extra details including passing and skipped tests.
@@ -240,9 +237,20 @@ component {
 	/**
 	 * Add runner options to URL
 	 *
+	 * We pass in ALL the arguments from the <code>run</code> method and we will build out the URL from the options.
+	 *
 	 * @return The incorporated options and testing URL to hit
 	 */
 	private function addRunnerOptions(){
+		// Mutex options: If we have a directory, we can't have bundles
+		if ( len( arguments.directory ) ) {
+			arguments[ "bundles" ] = "";
+		}
+		// Mutex options: If we have bundles, we can't have directory
+		if ( len( arguments.bundles ) ) {
+			arguments[ "directory" ] = "";
+		}
+
 		// Get testbox options from package descriptor
 		var boxOptions = packageService.readPackageDescriptor( getCWD() ).testbox;
 
@@ -272,6 +280,7 @@ component {
 		var extraOptions = boxOptions.options ?: {};
 		// Add in command-specific options
 		extraOptions.append( arguments.options );
+
 		// Append to URL.
 		for ( var opt in extraOptions ) {
 			arguments.testboxURL &= "&#encodeForURL( opt )#=#encodeForURL( extraOptions[ opt ] )#";
@@ -358,97 +367,6 @@ component {
 				return ".json";
 			}
 		}
-	}
-
-	/**
-	 * Discover the testbox runner URL from
-	 * 1) Passed argument
-	 * 2) box.json descriptor
-	 * 3) Current server descriptor
-	 *
-	 * @runner The runner argument
-	 */
-	private function discoverRunnerUrl( runner ){
-		// If a URL is passed, used it as an override
-		if ( left( arguments.runner, 4 ) == "http" || left( arguments.runner, 1 ) == "/" ) {
-			if ( !find( "?", arguments.runner ) ) {
-				arguments.runner &= "?";
-			}
-			return arguments.runner;
-		}
-
-		// Get Runner from the box.json
-		var runnerUrl = variables.testingService.getTestBoxRunner( getCWD(), arguments.runner );
-
-		// Validate runner
-		if ( !len( runnerUrl ) ) {
-			var boxJSON       = variables.packageService.readPackageDescriptor( getCWD() );
-			var boxJSONRunner = boxJSON.testbox.runner ?: "";
-			return error(
-				"[#arguments.runner#] it not a valid runner in your box.json. Runners found are: #boxJSONRunner.toString()#"
-			);
-		}
-
-		// Resolve relative URI, and match to the server defined in this package
-		if ( left( runnerUrl, 1 ) == "/" ) {
-			var serverDetails = variables.serverService.resolveServerDetails( {} );
-			var serverInfo    = serverDetails.serverInfo;
-
-			if ( serverDetails.serverIsNew ) {
-				error(
-					"The test runner we found [#runnerUrl#] looks like partial URI, but we can't find any servers in this directory. Please give us a full URL."
-				);
-			} else {
-				runnerUrl = ( serverInfo.SSLEnable ? "https://" : "http://" ) & "#serverInfo.host#:#serverInfo.port##runnerUrl#";
-			}
-		}
-
-		// If we failed to find a URL, throw an error
-		if ( left( runnerUrl, 4 ) != "http" ) {
-			return error( "[#runnerUrl#] it not a valid URL, or does not match a runner slug in your box.json." );
-		}
-
-		if ( !find( "?", runnerUrl ) ) {
-			runnerUrl &= "?";
-		}
-
-		return runnerUrl;
-	}
-
-	/**
-	 * Ensure that TestBox is installed
-	 *
-	 * @testboxUseLocal Use a local version of TestBox or in the execution path. Defaults to true, else it tries to download it
-	 */
-	private function ensureTestBox( boolean testboxUseLocal = true ){
-		// Where it should go in module
-		var testBoxPath = variables.moduleConfig.path & "/testbox";
-		var modulePath  = variables.moduleConfig.path;
-
-		// Check if installed locally
-		if ( arguments.testboxUseLocal ) {
-			testBoxPath = resolvePath( "testbox" );
-		}
-
-		if ( !directoryExists( testBoxPath ) ) {
-			variables.print
-				.blackOnWheat1( " WARN  " )
-				.line( " Uh-oh, TestBox could not be found locally [#testBoxPath#] or in the CLI path." )
-				.green1onDodgerBlue2( " INFO  " )
-				.line( " We will install a local version in the CLI path [#modulePath#] for you." )
-				.line()
-				.toConsole();
-
-			command( "install" ).params( "testbox", modulePath ).run();
-			testBoxPath = modulePath & "/testbox"
-		}
-
-		// Add our mapping
-		variables.fileSystemUtil.createMapping( "/testbox", testBoxPath );
-		// variables.print
-		// 	.green1onDodgerBlue2( " INFO  " )
-		// 	.line( " Created [/testbox] mapping at [#testBoxPath#]" )
-		// 	.toConsole();
 	}
 
 }

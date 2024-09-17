@@ -3,13 +3,25 @@
  */
 component extends="testbox.system.BaseSpec" {
 
+	/**
+	 * You can prepare variables here that will be available to all specs in this spec file
+	 */
+	property testbox;
+	property foo;
+	property salvador;
+
 	/*********************************** LIFE CYCLE Methods ***********************************/
 
+	/**
+	 * Executes BEFORE all suites in this spec file
+	 */
 	function beforeAll(){
-		// setup the entire test bundle here
 		variables.salvador = 1;
 	}
 
+	/**
+	 * Executes AFTER all suites in this spec file
+	 */
 	function afterAll(){
 		// do cleanup here
 	}
@@ -29,10 +41,9 @@ component extends="testbox.system.BaseSpec" {
 		 * @labels   The list or array of labels this suite group belongs to
 		 * @asyncAll If you want to parallelize the execution of the defined specs in this suite group.
 		 * @skip     A flag that tells TestBox to skip this suite group from testing if true
-		 * @focused A flag that tells TestBox to only run this suite and no other
+		 * @focused  A flag that tells TestBox to only run this suite and no other
 		 */
 		describe( "A spec", () => {
-
 			/**
 			 * --------------------------------------------------------------------------
 			 * Runs before each spec in THIS suite group or nested groups
@@ -54,15 +65,15 @@ component extends="testbox.system.BaseSpec" {
 
 			/**
 			 * it() describes a spec to test. Usually the title is prefixed with the suite name to create an expression.
-			 * You can also use the aliases: then() to create fluent chains of human-readable expressions.
+			 * You can also use the aliases: then(), test() to create fluent chains of human-readable expressions.
 			 *
 			 * Arguments:
 			 *
-			 * @title  The title of this spec
-			 * @body   The closure that represents the test
-			 * @labels The list or array of labels this spec belongs to
-			 * @skip   A flag or a closure that tells TestBox to skip this spec test from testing if true. If this is a closure it must return boolean.
-			 * @data   A struct of data you would like to bind into the spec so it can be later passed into the executing body function
+			 * @title   The title of this spec
+			 * @body    The closure that represents the test
+			 * @labels  The list or array of labels this spec belongs to
+			 * @skip    A flag or a closure that tells TestBox to skip this spec test from testing if true. If this is a closure it must return boolean.
+			 * @data    A struct of data you would like to bind into the spec so it can be later passed into the executing body function
 			 * @focused A flag that tells TestBox to only run this spec and no other
 			 */
 			it( "can test for equality", () => {
@@ -94,25 +105,21 @@ component extends="testbox.system.BaseSpec" {
 			} );
 
 			it(
-				title = "can have tests that execute if the right environment exists (lucee only)",
+				title = "can have tests that execute if the right environment exists (Windows Only)",
 				body  = () => {
-					expect( server ).toHaveKey( "lucee" );
+					expect( server.os.name ).toInclude( "Windows" );
 				},
-				skip = ( !isLucee() )
+				skip = ( !isWindows() )
 			);
 
 			it(
-				title = "can have tests that execute if the right environment exists (Adobe only)",
+				title = "can have tests that execute if the right environment exists (Mac Only)",
 				body  = () => {
-					expect( server ).notToHaveKey( "lucee" );
+					expect( server.os.name ).toInclude( "Mac" );
 				},
-				skip = ( isLucee() )
+				skip = ( !isMac() )
 			);
 		} );
-	}
-
-	private function isLucee(){
-		return ( structKeyExists( server, "lucee" ) );
 	}
 
 }
