@@ -1,9 +1,9 @@
-component{
+component {
 
 	// Global Injections
-	property name="settings" inject="box:modulesettings:testbox-cli";
-	property name="moduleConfig" inject="box:moduleConfig:testbox-cli";
-	property name="serverService" inject="serverService";
+	property name="settings"       inject="box:modulesettings:testbox-cli";
+	property name="moduleConfig"   inject="box:moduleConfig:testbox-cli";
+	property name="serverService"  inject="serverService";
 	property name="packageService" inject="PackageService";
 
 	/**
@@ -124,22 +124,22 @@ component{
 	private function isBoxLangProject( required cwd ){
 		// Detect if it's a BoxLang server first.
 		var serverInfo = variables.serverService.resolveServerDetails( {} ).serverInfo;
-		if( serverInfo.cfengine.findNoCase( "boxlang" ) ){
+		if ( serverInfo.cfengine.findNoCase( "boxlang" ) ) {
 			return true;
 		}
 
 		// Detect if you have the BoxLang runner set.
 		var boxOptions = variables.packageService.readPackageDescriptor( arguments.cwd );
-		if(
+		if (
 			boxOptions.testbox.keyExists( "runner" )
 			&& isSimpleValue( boxOptions.testbox.runner )
 			&& boxOptions.testbox.runner == "boxlang"
-		){
+		) {
 			return true;
 		}
 
 		// Language mode
-		if( boxOptions.keyExists( "language" ) && boxOptions.language == "boxlang" ){
+		if ( boxOptions.keyExists( "language" ) && boxOptions.language == "boxlang" ) {
 			return true;
 		}
 

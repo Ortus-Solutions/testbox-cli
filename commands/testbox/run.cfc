@@ -54,7 +54,7 @@
  * {code}
  *
  **/
-component extends="testboxCLI.models.BaseCommand"{
+component extends="testboxCLI.models.BaseCommand" {
 
 	// DI
 	property name="testingService" inject="TestingService@testbox-cli";

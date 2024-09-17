@@ -7,7 +7,7 @@
  * {code}
  *
  **/
- component extends="testboxCLI.models.BaseCommand"{
+component extends="testboxCLI.models.BaseCommand" {
 
 	/**
 	 * @name Name of the xUnit bundle to create without the .cfc. For packages, specify name as 'myPackage/MyTest'
@@ -17,8 +17,8 @@
 	 **/
 	function run(
 		required name,
-		boolean open = false,
-		directory    = getCWD(),
+		boolean open    = false,
+		directory       = getCWD(),
 		boolean boxlang = isBoxLangProject( getCWD() )
 	){
 		// Allow dot-delimited paths
@@ -46,7 +46,7 @@
 		print.line();
 
 		// Read in Templates
-		var content = fileRead( "#variables.settings.templatesPath#/#arguments.boxlang ? 'bx' : 'cfml'#/unit.txt" );
+		var content = fileRead( "#variables.settings.templatesPath#/#arguments.boxlang ? "bx" : "cfml"#/unit.txt" );
 
 		// Write out BDD Spec
 		var thisPath= "#arguments.directory#/#name#.cfc";

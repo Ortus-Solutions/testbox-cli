@@ -11,7 +11,7 @@
  * testbox create visualizer C:\myApp
  * {code}
  */
-component extends="testboxCLI.models.BaseCommand"{
+component extends="testboxCLI.models.BaseCommand" {
 
 	/**
 	 * @directory The base directory to create your test visualizer

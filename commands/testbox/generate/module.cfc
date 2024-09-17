@@ -11,7 +11,7 @@
  * testbox create module myModule tests/resources/modules
  * {code}
  */
-component extends="testboxCLI.models.BaseCommand"{
+component extends="testboxCLI.models.BaseCommand" {
 
 	/**
 	 * @name The name of the module
@@ -21,7 +21,7 @@ component extends="testboxCLI.models.BaseCommand"{
 	function run(
 		required name,
 		string rootDirectory = getCWD(),
-		boolean boxlang = isBoxLangProject( getCWD() )
+		boolean boxlang      = isBoxLangProject( getCWD() )
 	){
 		var moduleDirectory = resolvePath( arguments.rootDirectory ) & "/" & arguments.name;
 
@@ -31,7 +31,7 @@ component extends="testboxCLI.models.BaseCommand"{
 
 			// Copy template
 			directoryCopy(
-				"#variables.settings.templatesPath#/#arguments.boxlang ? 'bx' : 'cfml'#/module/",
+				"#variables.settings.templatesPath#/#arguments.boxlang ? "bx" : "cfml"#/module/",
 				moduleDirectory,
 				true
 			);

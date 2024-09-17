@@ -7,7 +7,7 @@
  * {code}
  *
  **/
-component extends="testboxCLI.models.BaseCommand"{
+component extends="testboxCLI.models.BaseCommand" {
 
 	/**
 	 * @name Name of the BDD spec to create without the .cfc. For packages, specify name as 'myPackage/myBDDSpec'
@@ -17,8 +17,8 @@ component extends="testboxCLI.models.BaseCommand"{
 	 **/
 	function run(
 		required name,
-		boolean open = false,
-		directory    = getCWD(),
+		boolean open    = false,
+		directory       = getCWD(),
 		boolean boxlang = isBoxLangProject( getCWD() )
 	){
 		isBoxLangProject();
@@ -49,7 +49,7 @@ component extends="testboxCLI.models.BaseCommand"{
 		print.line();
 
 		// Read in Templates
-		var BDDContent = fileRead( "#variables.settings.templatesPath#/#arguments.boxlang ? 'bx' : 'cfml'#/bdd.txt" );
+		var BDDContent = fileRead( "#variables.settings.templatesPath#/#arguments.boxlang ? "bx" : "cfml"#/bdd.txt" );
 
 		// Write out BDD Spec
 		var BDDPath= "#arguments.directory#/#name#.cfc";
