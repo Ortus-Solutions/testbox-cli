@@ -11,17 +11,17 @@
  * testbox create module myModule tests/resources/modules
  * {code}
  */
-component {
-
-	property name="settings" inject="box:modulesettings:testbox-cli";
+component extends="testboxCLI.models.BaseCommand"{
 
 	/**
 	 * @name The name of the module
 	 * @rootDirectory Where to create the module, by default it will be in the same folder as you call the command
+	 * @boxlang   Is this a boxlang project? else it is a CFML project
 	 */
 	function run(
 		required name,
-		string rootDirectory = getCWD()
+		string rootDirectory = getCWD(),
+		boolean boxlang = isBoxLangProject( getCWD() )
 	){
 		var moduleDirectory = resolvePath( arguments.rootDirectory ) & "/" & arguments.name;
 
@@ -31,7 +31,7 @@ component {
 
 			// Copy template
 			directoryCopy(
-				"#variables.settings.templatesPath#/testbox/module/",
+				"#variables.settings.templatesPath#/#arguments.boxlang ? 'bx' : 'cfml'#/module/",
 				moduleDirectory,
 				true
 			);

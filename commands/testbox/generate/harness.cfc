@@ -11,14 +11,16 @@
  * testbox create harness C:\myApp
  * {code}
  */
-component {
-
-	property name="settings" inject="box:modulesettings:testbox-cli";
+component extends="testboxCLI.models.BaseCommand"{
 
 	/**
-	 * @directory The base directory to create your test harness
+	 * @directory The base directory to create your test browser
+	 * @boxlang   Is this a boxlang project? else it is a CFML project
 	 */
-	function run( string directory = getCWD() ){
+	function run(
+		string directory = getCWD(),
+		boolean boxlang = isBoxLangProject( getCWD() )
+	){
 		// This will make each directory canonical and absolute
 		arguments.directory = resolvePath( arguments.directory & "/tests" );
 
@@ -26,9 +28,9 @@ component {
 		if ( !directoryExists( arguments.directory ) ) {
 			directoryCreate( arguments.directory );
 
-			// Copy template
+			// Copy template from testbox source
 			directoryCopy(
-				"#variables.settings.templatesPath#/testbox/test-harness/",
+				"#variables.settings.templatesPath#/#arguments.boxlang ? 'bx' : 'cfml'#/tests/",
 				arguments.directory,
 				true
 			);

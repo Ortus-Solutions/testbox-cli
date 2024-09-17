@@ -1,0 +1,32 @@
+/**
+* My xUnit Test
+*/
+class extends="testbox.system.BaseSpec"{
+
+/*********************************** LIFE CYCLE Methods ***********************************/
+
+	// executes before all test cases
+	function beforeTests(){
+	}
+
+	// executes after all test cases
+	function afterTests(){
+	}
+
+	// executes before every test case
+	function setup( currentMethod ){
+	}
+
+	// executes after every test case
+	function teardown( currentMethod ){
+	}
+
+/*********************************** TEST CASES BELOW ***********************************/
+
+	@Test
+	@DisplayName "A beautiful xUnit Test"
+	function myMethodTest(){
+		fail( "implement it" )
+	}
+
+}

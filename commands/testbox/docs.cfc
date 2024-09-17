@@ -21,7 +21,6 @@ component {
 	 **/
 	function run( string search = "" ){
 		var docsUri = "https://testbox.ortusbooks.com" & ( search.len() ? "?q=#search#" : "" );
-
 		command( "browse" ).params( uri: docsUri ).run();
 	}
 

@@ -10,7 +10,7 @@ component {
 
 	this.name      = "TestBox CLI";
 	this.version   = "@build.version@+@build.number@";
-	this.cfmapping = "testbox-cli";
+	this.cfmapping = "testboxCLI";
 
 	function configure(){
 		settings = { templatesPath : modulePath & "/templates" }

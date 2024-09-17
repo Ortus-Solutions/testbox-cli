@@ -9,16 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Internal refactoring for reuse of commands
+- BoxLang support for all generation commands and templates
+- You can now also use `--boxlang` to generate templates in BoxLang explicitly without detection
+- Bundle `displayName` now showing up on the reports
+- Updated the `run` command with tons of docs
+- Mutually exclusive options for `run` command which never existed before for `bundles` and `directory`
+
 ### Bugs
 
 - Using the `useTestBoxLocal` was not working correctly and re-downloading TestBox every time
 - TestBox run should use webroot when resolving testbox location in ensureTestBox()
-
-### Added
-
-- Bundle `displayName` now showing up on the reports
-- Updated the `run` command with tons of docs
-- Mutually exclusive options for `run` command which never existed before for `bundles` and `directory`
 
 ## [1.4.0] - 2024-02-29
 
