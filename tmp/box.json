@@ -1,0 +1,8 @@
+{
+    "dependencies":{
+        "testbox":"^5.4.0+7"
+    },
+    "installPaths":{
+        "testbox":"/Users/lmajano/Sites/projects/commandbox-modules/testbox-cli/testbox/"
+    }
+}

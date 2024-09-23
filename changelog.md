@@ -13,6 +13,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Visualizer template missing.
+
+### Fixed
+
+- Overgreedy ignore, missing the `tests` folder in the final package
+
+## [1.5.0] - 2024-09-17
+
+### Added
+
 - Internal refactoring for reuse of commands
 - BoxLang support for all generation commands and templates
 - You can now also use `--boxlang` to generate templates in BoxLang explicitly without detection

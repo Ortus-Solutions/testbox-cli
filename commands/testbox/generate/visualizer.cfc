@@ -20,16 +20,13 @@ component extends="testboxCLI.models.BaseCommand" {
 		// This will make each directory canonical and absolute
 		arguments.directory = resolvePath( arguments.directory & "/tests/test-visualizer" );
 
-		// Make sure we have the latest TestBox for assets
-		ensureTestBox( false );
-
 		// Validate directory
 		if ( !directoryExists( arguments.directory ) ) {
 			directoryCreate( arguments.directory );
 
 			// Copy template
 			directoryCopy(
-				expandPath( "/testbox/test-visualizer" ),
+				"#variables.settings.templatesPath#/visualizer/",
 				arguments.directory,
 				true
 			);
