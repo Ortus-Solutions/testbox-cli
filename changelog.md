@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Visualizer template missing.
+
+### Fixed
+
+- Overgreedy ignore, missing the `tests` folder in the final package
+
 ## [1.5.0] - 2024-09-17
 
 ### Added
