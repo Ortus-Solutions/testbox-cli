@@ -26,7 +26,7 @@
         "commandbox-docbox":"*"
     },
     "dependencies":{
-        "testbox":"^5.3.0+5"
+        "testbox":"*"
     },
     "installPaths":{
         "testbox":"testbox/"
@@ -34,7 +34,8 @@
     "ignore":[
         "**/.*",
         "build/*",
-        "./tests/**"
+        "./tests/**",
+		"./tmp/**"
     ],
     "scripts":{
         "build:module":"task run taskFile=build/Build.cfc :projectName=`package show slug` :version=`package show version`",
