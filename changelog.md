@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2024-09-23
+
+## [1.5.0] - 2024-09-17
+
 ### Added
 
 - Visualizer template missing.
@@ -141,7 +145,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New `testbox apidocs` command to open the TestBox API Docs in your browser.
 - Initial Creation of this project
 
-[Unreleased]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.6.0...HEAD
+
+[1.6.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.5.0...v1.6.0
 
 [1.5.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.4.0...v1.5.0
 
