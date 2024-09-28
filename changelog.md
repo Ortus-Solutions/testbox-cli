@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- You can now pass slashes on bundles and will automatically convert them to dot notation.
+
 ## [1.6.0] - 2024-09-23
 
 ## [1.5.0] - 2024-09-17
