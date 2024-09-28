@@ -111,7 +111,7 @@ component extends="testboxCLI.models.BaseCommand" {
 		boolean testboxUseLocal = true
 	){
 		// Remove /\ to . in bundles
-		if( !isNull( arguments.bundles ) ){
+		if ( !isNull( arguments.bundles ) ) {
 			arguments.bundles = arguments.bundles.replace( "/\", "." );
 		}
 
