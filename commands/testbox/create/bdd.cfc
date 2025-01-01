@@ -21,9 +21,6 @@ component extends="testboxCLI.models.BaseCommand" {
 		directory       = getCWD(),
 		boolean boxlang = isBoxLangProject( getCWD() )
 	){
-		isBoxLangProject();
-		return;
-
 		// Allow dot-delimited paths
 		arguments.name = replace( arguments.name, ".", "/", "all" );
 
