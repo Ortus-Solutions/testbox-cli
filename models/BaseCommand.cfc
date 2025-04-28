@@ -147,4 +147,13 @@ component {
 		return false;
 	}
 
+	function toBoxLangClass( required content ){
+		return reReplaceNoCase(
+			arguments.content,
+			"component(\s|\n)?",
+			"class #chr( 13 )#",
+			"all"
+		);
+	}
+
 }
