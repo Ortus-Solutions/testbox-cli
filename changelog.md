@@ -9,12 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0] - 2025-08-06
+
 ### Added
 
 - Dependabot updates
 - Global exception handling for bundles when things could have gone wrong
 - Copilot instructions
 - You can now pass slashes on bundles and will automatically convert them to dot notation.
+
+* * *
 
 ## [1.6.0] - 2024-09-23
 
@@ -25,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Overgreedy ignore, missing the `tests` folder in the final package
+
+* * *
 
 ## [1.5.0] - 2024-09-17
 
@@ -150,34 +156,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New `testbox apidocs` command to open the TestBox API Docs in your browser.
 - Initial Creation of this project
 
-[Unreleased]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.6.0...HEAD
-
+[unreleased]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.5.0...v1.6.0
-
 [1.5.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.4.0...v1.5.0
-
 [1.4.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.3.0...v1.4.0
-
 [1.3.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.2.2...v1.3.0
-
 [1.2.2]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.2.1...v1.2.2
-
 [1.2.1]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.2.0...v1.2.1
-
 [1.2.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.1.3...v1.2.0
-
 [1.1.3]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.1.2...v1.1.3
-
 [1.1.2]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.1.1...v1.1.2
-
 [1.1.1]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.1.0...v1.1.1
-
 [1.1.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.0.3...v1.1.0
-
 [1.0.3]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.0.2...v1.0.3
-
 [1.0.2]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.0.1...v1.0.2
-
 [1.0.1]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.0.0...v1.0.1
-
 [1.0.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.0.0...v1.0.0
