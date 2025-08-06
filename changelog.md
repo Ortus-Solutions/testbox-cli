@@ -9,16 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.6.0] - 2024-09-23
-
-## [1.5.0] - 2024-09-17
-
 ### Added
 
 - Dependabot updates
 - Global exception handling for bundles when things could have gone wrong
 - Copilot instructions
 - You can now pass slashes on bundles and will automatically convert them to dot notation.
+
+* * *
 
 ## [1.6.0] - 2024-09-23
 
@@ -29,6 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Overgreedy ignore, missing the `tests` folder in the final package
+
+* * *
 
 ## [1.5.0] - 2024-09-17
 
