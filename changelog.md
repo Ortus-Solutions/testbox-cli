@@ -15,6 +15,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Dependabot updates
+- Global exception handling for bundles when things could have gone wrong
+- Copilot instructions
+- You can now pass slashes on bundles and will automatically convert them to dot notation.
+
+## [1.6.0] - 2024-09-23
+
+### Added
+
 - Visualizer template missing.
 
 ### Fixed
