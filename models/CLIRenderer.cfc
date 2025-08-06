@@ -74,7 +74,7 @@ component {
 						COLOR.ERROR
 					)
 					.line(
-						"-> #thisBundle.globalException.type#:#thisBundle.globalException.message#:#thisBundle.globalException.detail#",
+						"-> #thisBundle.globalException.type ?: 'none'#:#thisBundle.globalException.message ?: 'none'#:#thisBundle.globalException.detail ?: 'none'#",
 						COLOR.ERROR
 					);
 
