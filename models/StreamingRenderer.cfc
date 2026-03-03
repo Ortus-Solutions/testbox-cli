@@ -5,15 +5,24 @@
 component singleton {
 
 	property name="progressBarGeneric" inject="progressBarGeneric";
+	property name="shell" inject="shell";
+	property name="print" inject="Print";
 
 	processingdirective pageEncoding="UTF-8";
 
 	variables.COLOR = {
 		PASS    : "SpringGreen1",
-		SKIP    : "blue",
+		SKIP    : "gray",
 		ERROR   : "boldRed",
 		FAIL    : "red",
 		RUNNING : "yellow"
+	};
+
+	// ANSI escape codes for terminal control
+	variables.ANSI = {
+		"CLEAR_LINE"      : chr( 27 ) & "[2K",  // Clear entire line
+		"CARRIAGE_RETURN" : chr( 13 ),          // Move cursor to beginning of line
+		"CURSOR_UP"       : chr( 27 ) & "[1A"   // Move cursor up one line
 	};
 
 	// Track state during streaming
@@ -27,7 +36,9 @@ component singleton {
 		"passedSpecs"      : 0,
 		"failedSpecs"      : 0,
 		"errorSpecs"       : 0,
-		"skippedSpecs"     : 0
+		"skippedSpecs"     : 0,
+		"hasRunningSpec"   : false,  // Track if we have a running spec line to overwrite
+		"runningSpecLine"  : ""      // Track current running spec line content
 	};
 
 	/**
@@ -44,7 +55,9 @@ component singleton {
 			"passedSpecs"      : 0,
 			"failedSpecs"      : 0,
 			"errorSpecs"       : 0,
-			"skippedSpecs"     : 0
+			"skippedSpecs"     : 0,
+			"hasRunningSpec"   : false,
+			"runningSpecLine"  : ""
 		};
 		return this;
 	}
@@ -61,6 +74,24 @@ component singleton {
 		var renderer = this;
 		var p        = arguments.print;
 		var v        = arguments.verbose;
+		var sh       = variables.shell;
+		var pr       = variables.print;  // Print helper for getting colored strings
+		
+		// Get terminal for real-time output
+		var terminal = javacast( "null", "" );
+		var termWriter = javacast( "null", "" );
+		try {
+			if ( !isNull( sh ) && !isNull( sh.getReader() ) ) {
+				terminal = sh.getReader().getTerminal();
+				termWriter = terminal.writer();
+			}
+		} catch ( any e ) {
+			// Terminal not available, will fall back to print buffer
+		}
+
+		// ANSI codes for terminal control (needed in closures)
+		var ANSI_CR = variables.ANSI.CARRIAGE_RETURN;
+		var ANSI_CLEAR = variables.ANSI.CLEAR_LINE;
 
 		return {
 			"testRunStart" : function( data ){
@@ -102,7 +133,26 @@ component singleton {
 			},
 			"specStart" : function( data ){
 				variables.state.totalSpecs++;
-				// Could show a spinner or "running" indicator here
+				var name   = data.displayName ?: data.name ?: "Unknown Spec";
+				var indent = repeatString( "  ", variables.state.suiteStack.len() + 1 );
+				
+				// Show running spec indicator
+				// Use raw terminal writer for proper ANSI code handling (bypasses AttributedString)
+				if ( !isNull( termWriter ) && !isNull( pr ) ) {
+					var runningText = pr.yellowText( "#indent#» #name#..." );
+					termWriter.print( runningText );
+					termWriter.flush();
+					// Also flush the terminal itself to force immediate display
+					if ( !isNull( terminal ) ) {
+						terminal.flush();
+					}
+					variables.state.hasRunningSpec = true;
+					variables.state.runningSpecLine = runningText;
+				} else {
+					// Fallback to print buffer for testing
+					p.text( "#indent#» #name#...", variables.COLOR.RUNNING ).toConsole();
+					variables.state.hasRunningSpec = true;
+				}
 			},
 			"specEnd" : function( data ){
 				var status = data.status ?: "unknown";
@@ -125,7 +175,23 @@ component singleton {
 						break;
 				}
 
-				// Only show non-passing specs, or all if verbose
+				// Clear the running spec line
+				if ( variables.state.hasRunningSpec ) {
+					if ( !isNull( termWriter ) ) {
+						// Move to beginning of line and clear it
+						termWriter.print( ANSI_CR & ANSI_CLEAR );
+						termWriter.flush();
+					} else {
+						// Fallback for testing
+						p.text( ANSI_CR & ANSI_CLEAR ).toConsole();
+					}
+					variables.state.hasRunningSpec = false;
+					variables.state.runningSpecLine = "";
+				}
+
+				// For passed specs: line is cleared, nothing printed (already overwritten)
+				// For failed/error/skipped: print the result (it persists)
+				// If verbose: always print the result
 				if ( status != "passed" || v ) {
 					var indicator = renderer.getIndicator( status );
 					var color     = renderer.getStatusColor( status );
