@@ -5,8 +5,8 @@
 component singleton {
 
 	property name="progressBarGeneric" inject="progressBarGeneric";
-	property name="shell" inject="shell";
-	property name="print" inject="Print";
+	property name="shell"              inject="shell";
+	property name="print"              inject="Print";
 
 	processingdirective pageEncoding="UTF-8";
 
@@ -20,9 +20,9 @@ component singleton {
 
 	// ANSI escape codes for terminal control
 	variables.ANSI = {
-		"CLEAR_LINE"      : chr( 27 ) & "[2K",  // Clear entire line
-		"CARRIAGE_RETURN" : chr( 13 ),          // Move cursor to beginning of line
-		"CURSOR_UP"       : chr( 27 ) & "[1A"   // Move cursor up one line
+		"CLEAR_LINE"      : chr( 27 ) & "[2K", // Clear entire line
+		"CARRIAGE_RETURN" : chr( 13 ), // Move cursor to beginning of line
+		"CURSOR_UP"       : chr( 27 ) & "[1A" // Move cursor up one line
 	};
 
 	// Track state during streaming
@@ -37,8 +37,8 @@ component singleton {
 		"failedSpecs"      : 0,
 		"errorSpecs"       : 0,
 		"skippedSpecs"     : 0,
-		"hasRunningSpec"   : false,  // Track if we have a running spec line to overwrite
-		"runningSpecLine"  : ""      // Track current running spec line content
+		"hasRunningSpec"   : false, // Track if we have a running spec line to overwrite
+		"runningSpecLine"  : "" // Track current running spec line content
 	};
 
 	/**
@@ -70,19 +70,22 @@ component singleton {
 	 *
 	 * @return Struct of event handler closures
 	 */
-	struct function createEventHandlers( required print, boolean verbose = false ){
+	struct function createEventHandlers(
+		required print,
+		boolean verbose = false
+	){
 		var renderer = this;
 		var p        = arguments.print;
 		var v        = arguments.verbose;
 		var sh       = variables.shell;
-		var pr       = variables.print;  // Print helper for getting colored strings
-		
+		var pr       = variables.print; // Print helper for getting colored strings
+
 		// Get terminal for real-time output
-		var terminal = javacast( "null", "" );
+		var terminal   = javacast( "null", "" );
 		var termWriter = javacast( "null", "" );
 		try {
 			if ( !isNull( sh ) && !isNull( sh.getReader() ) ) {
-				terminal = sh.getReader().getTerminal();
+				terminal   = sh.getReader().getTerminal();
 				termWriter = terminal.writer();
 			}
 		} catch ( any e ) {
@@ -90,23 +93,31 @@ component singleton {
 		}
 
 		// ANSI codes for terminal control (needed in closures)
-		var ANSI_CR = variables.ANSI.CARRIAGE_RETURN;
+		var ANSI_CR    = variables.ANSI.CARRIAGE_RETURN;
 		var ANSI_CLEAR = variables.ANSI.CLEAR_LINE;
 
 		return {
 			"testRunStart" : function( data ){
 				renderer.resetState();
 				variables.state.totalBundles = data.totalBundles ?: 0;
-				p.line().boldCyanLine( "Starting test run with #variables.state.totalBundles# bundle(s)..." ).toConsole();
+				p.line()
+					.boldCyanLine( "Starting test run with #variables.state.totalBundles# bundle(s)..." )
+					.toConsole();
 			},
 			"bundleStart" : function( data ){
 				variables.state.currentBundle = data.name ?: data.path ?: "Unknown Bundle";
 				variables.state.suiteStack    = [];
-				p.line().boldWhiteLine( "Bundle: #variables.state.currentBundle#" ).toConsole();
+				p.line()
+					.boldWhiteLine( "Bundle: #variables.state.currentBundle#" )
+					.toConsole();
 			},
 			"bundleEnd" : function( data ){
 				variables.state.completedBundles++;
-				var color = renderer.getAggregatedColor( data.totalError ?: 0, data.totalFail ?: 0, 0 );
+				var color = renderer.getAggregatedColor(
+					data.totalError ?: 0,
+					data.totalFail ?: 0,
+					0
+				);
 				p.line(
 						"  [Passed: #data.totalPass ?: 0#] [Failed: #data.totalFail ?: 0#] [Errors: #data.totalError ?: 0#] [Skipped: #data.totalSkipped ?: 0#] (#data.totalDuration ?: 0# ms)",
 						color
@@ -116,9 +127,16 @@ component singleton {
 			"suiteStart" : function( data ){
 				variables.state.suiteStack.append( data.name ?: "Unknown Suite" );
 				variables.state.currentSuite = data.name ?: "Unknown Suite";
-				var indent                   = repeatString( "  ", variables.state.suiteStack.len() );
+				var indent                   = repeatString(
+					"  ",
+					variables.state.suiteStack.len()
+				);
 				if ( v ) {
-					p.line( "#indent##data.name ?: 'Unknown Suite'#", "white" ).toConsole();
+					p.line(
+							"#indent##data.name ?: "Unknown Suite"#",
+							"white"
+						)
+						.toConsole();
 				}
 			},
 			"suiteEnd" : function( data ){
@@ -134,8 +152,11 @@ component singleton {
 			"specStart" : function( data ){
 				variables.state.totalSpecs++;
 				var name   = data.displayName ?: data.name ?: "Unknown Spec";
-				var indent = repeatString( "  ", variables.state.suiteStack.len() + 1 );
-				
+				var indent = repeatString(
+					"  ",
+					variables.state.suiteStack.len() + 1
+				);
+
 				// Show running spec indicator
 				// Use raw terminal writer for proper ANSI code handling (bypasses AttributedString)
 				if ( !isNull( termWriter ) && !isNull( pr ) ) {
@@ -146,18 +167,25 @@ component singleton {
 					if ( !isNull( terminal ) ) {
 						terminal.flush();
 					}
-					variables.state.hasRunningSpec = true;
+					variables.state.hasRunningSpec  = true;
 					variables.state.runningSpecLine = runningText;
 				} else {
 					// Fallback to print buffer for testing
-					p.text( "#indent#» #name#...", variables.COLOR.RUNNING ).toConsole();
+					p.text(
+							"#indent#» #name#...",
+							variables.COLOR.RUNNING
+						)
+						.toConsole();
 					variables.state.hasRunningSpec = true;
 				}
 			},
 			"specEnd" : function( data ){
 				var status = data.status ?: "unknown";
 				var name   = data.displayName ?: data.name ?: "Unknown Spec";
-				var indent = repeatString( "  ", variables.state.suiteStack.len() + 1 );
+				var indent = repeatString(
+					"  ",
+					variables.state.suiteStack.len() + 1
+				);
 
 				// Update counters
 				switch ( status ) {
@@ -185,7 +213,7 @@ component singleton {
 						// Fallback for testing
 						p.text( ANSI_CR & ANSI_CLEAR ).toConsole();
 					}
-					variables.state.hasRunningSpec = false;
+					variables.state.hasRunningSpec  = false;
 					variables.state.runningSpecLine = "";
 				}
 
@@ -195,23 +223,36 @@ component singleton {
 				if ( status != "passed" || v ) {
 					var indicator = renderer.getIndicator( status );
 					var color     = renderer.getStatusColor( status );
-					p.line( "#indent##indicator##name# (#data.totalDuration ?: 0# ms)", color ).toConsole();
+					p.line(
+							"#indent##indicator##name# (#data.totalDuration ?: 0# ms)",
+							color
+						)
+						.toConsole();
 
 					// Show failure details
 					if ( status == "failed" && len( data.failMessage ?: "" ) ) {
-						p.line( "#indent#  -> Failure: #data.failMessage#", variables.COLOR.FAIL ).toConsole();
+						p.line(
+								"#indent#  -> Failure: #data.failMessage#",
+								variables.COLOR.FAIL
+							)
+							.toConsole();
 					}
 
 					// Show error details
 					if ( status == "error" && structKeyExists( data, "error" ) && isStruct( data.error ) ) {
-						p.line( "#indent#  -> Error: #data.error.message ?: 'Unknown error'#", variables.COLOR.ERROR )
+						p.line(
+								"#indent#  -> Error: #data.error.message ?: "Unknown error"#",
+								variables.COLOR.ERROR
+							)
 							.toConsole();
 					}
 				}
 			},
 			"testRunEnd" : function( data ){
 				// Final summary is handled by the main renderer using the full results
-				p.line().boldGreenLine( "Test run complete!" ).toConsole();
+				p.line()
+					.boldGreenLine( "Test run complete!" )
+					.toConsole();
 			}
 		};
 	}

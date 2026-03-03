@@ -116,7 +116,7 @@ component extends="testboxCLI.models.BaseCommand" {
 		string outputFile,
 		string outputFormats = "",
 		boolean verbose,
-		boolean streaming = false,
+		boolean streaming       = false,
 		boolean testboxUseLocal = true
 	){
 		// Remove /\ to . in bundles
@@ -402,7 +402,10 @@ component extends="testboxCLI.models.BaseCommand" {
 		var isVerbose  = arguments.verbose ?: boxOptions.verbose ?: false;
 
 		// Advise we are running in streaming mode
-		print.boldCyanLine( "Executing tests in streaming mode..." ).line().toConsole();
+		print
+			.boldCyanLine( "Executing tests in streaming mode..." )
+			.line()
+			.toConsole();
 
 		// Create event handlers for streaming output
 		var eventHandlers = StreamingRenderer.createEventHandlers( print, isVerbose );
@@ -411,7 +414,7 @@ component extends="testboxCLI.models.BaseCommand" {
 		var testsFailed = false;
 
 		// Override testRunEnd to capture failure state
-		var originalTestRunEnd = eventHandlers.testRunEnd;
+		var originalTestRunEnd   = eventHandlers.testRunEnd;
 		eventHandlers.testRunEnd = function( data ){
 			// Check for failures in the full results
 			if (
@@ -442,7 +445,10 @@ component extends="testboxCLI.models.BaseCommand" {
 				}
 			);
 		} catch ( any e ) {
-			logger.error( "Error during streaming: #e.message# #e.detail#", e );
+			logger.error(
+				"Error during streaming: #e.message# #e.detail#",
+				e
+			);
 			return error( "Error executing streaming tests: #CR# #e.message##CR##e.detail#" );
 		}
 
@@ -480,7 +486,10 @@ component extends="testboxCLI.models.BaseCommand" {
 				directoryCreate( thisDir );
 			}
 
-			fileWrite( arguments.outputFile, formatterUtil.formatJSON( serializeJSON( finalResults ) ) );
+			fileWrite(
+				arguments.outputFile,
+				formatterUtil.formatJSON( serializeJSON( finalResults ) )
+			);
 			print.boldGreenLine( "===> JSON Report written to #arguments.outputFile#!" );
 		}
 	}

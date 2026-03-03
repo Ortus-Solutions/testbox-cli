@@ -46,8 +46,8 @@ component singleton {
 			}
 
 			// Read the stream line by line
-			var inputStream   = connection.getInputStream();
-			var reader        = createObject( "java", "java.io.BufferedReader" ).init(
+			var inputStream = connection.getInputStream();
+			var reader      = createObject( "java", "java.io.BufferedReader" ).init(
 				createObject( "java", "java.io.InputStreamReader" ).init( inputStream, "UTF-8" )
 			);
 
@@ -115,11 +115,20 @@ component singleton {
 
 		// If this is the final event, capture the full results
 		if ( arguments.eventType == "testRunEnd" && structKeyExists( data, "results" ) ) {
-			structAppend( arguments.finalResults, data.results, true );
+			structAppend(
+				arguments.finalResults,
+				data.results,
+				true
+			);
 		}
 
 		// Call the appropriate handler if one exists
-		if ( structKeyExists( arguments.eventHandlers, arguments.eventType ) ) {
+		if (
+			structKeyExists(
+				arguments.eventHandlers,
+				arguments.eventType
+			)
+		) {
 			var handler = arguments.eventHandlers[ arguments.eventType ];
 			if ( isClosure( handler ) ) {
 				handler( data );
