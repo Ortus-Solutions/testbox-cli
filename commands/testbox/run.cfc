@@ -411,7 +411,8 @@ component extends="testboxCLI.models.BaseCommand" {
 		var eventHandlers = StreamingRenderer.createEventHandlers( print, isVerbose );
 
 		// Track if tests failed for exit code
-		var testsFailed = false;
+		var testsFailed    = false;
+		var streamingError = false;
 
 		// Override testRunEnd to capture failure state
 		var originalTestRunEnd   = eventHandlers.testRunEnd;
@@ -438,6 +439,8 @@ component extends="testboxCLI.models.BaseCommand" {
 				url           = streamingUrl,
 				eventHandlers = eventHandlers,
 				onError       = function( error ){
+					// Mark streaming as failed for exit code
+					streamingError = true;
 					print.boldRedLine( "Streaming error: #error.message#" ).toConsole();
 					if ( structKeyExists( error, "detail" ) && len( error.detail ) ) {
 						print.redLine( error.detail ).toConsole();
@@ -452,8 +455,8 @@ component extends="testboxCLI.models.BaseCommand" {
 			return error( "Error executing streaming tests: #CR# #e.message##CR##e.detail#" );
 		}
 
-		// Set exit code based on results
-		if ( testsFailed ) {
+		// Set exit code based on results or streaming errors
+		if ( testsFailed || streamingError ) {
 			setExitCode( 1 );
 		}
 
