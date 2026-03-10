@@ -209,6 +209,10 @@ component singleton {
 						// Move to beginning of line and clear it
 						termWriter.print( ANSI_CR & ANSI_CLEAR );
 						termWriter.flush();
+						// Also flush the terminal itself for consistent real-time rendering
+						if ( !isNull( terminal ) ) {
+							terminal.flush();
+						}
 					} else {
 						// Fallback for testing
 						p.text( ANSI_CR & ANSI_CLEAR ).toConsole();
