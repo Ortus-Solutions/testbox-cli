@@ -21,11 +21,14 @@ component singleton {
 		any onError
 	){
 		var finalResults = {};
+		var reader       = javacast( "null", "" );
+		var inputStream  = javacast( "null", "" );
+		var connection   = javacast( "null", "" );
 
 		try {
 			// Create URL connection
-			var netURL     = createObject( "java", "java.net.URL" ).init( arguments.url );
-			var connection = netURL.openConnection();
+			var netURL = createObject( "java", "java.net.URL" ).init( arguments.url );
+			connection = netURL.openConnection();
 
 			connection.setRequestProperty( "Accept", "text/event-stream" );
 			connection.setRequestProperty(
@@ -46,8 +49,8 @@ component singleton {
 			}
 
 			// Read the stream line by line
-			var inputStream = connection.getInputStream();
-			var reader      = createObject( "java", "java.io.BufferedReader" ).init(
+			inputStream = connection.getInputStream();
+			reader      = createObject( "java", "java.io.BufferedReader" ).init(
 				createObject( "java", "java.io.InputStreamReader" ).init( inputStream, "UTF-8" )
 			);
 
@@ -62,6 +65,15 @@ component singleton {
 
 				// End of stream
 				if ( isNull( line ) ) {
+					// Process any buffered event if stream ends without trailing blank line
+					if ( len( currentEvent ) && len( currentData ) ) {
+						processEvent(
+							eventType     = currentEvent,
+							eventData     = currentData,
+							eventHandlers = arguments.eventHandlers,
+							finalResults  = finalResults
+						);
+					}
 					break;
 				}
 
@@ -84,14 +96,31 @@ component singleton {
 					currentData  = "";
 				}
 			}
-
-			reader.close();
-			inputStream.close();
 		} catch ( any e ) {
 			if ( !isNull( arguments.onError ) && isClosure( arguments.onError ) ) {
 				arguments.onError( e );
 			} else {
 				rethrow;
+			}
+		} finally {
+			// Clean up resources
+			try {
+				if ( !isNull( reader ) ) {
+					reader.close();
+				}
+			} catch ( any ignore ) {
+			}
+			try {
+				if ( !isNull( inputStream ) ) {
+					inputStream.close();
+				}
+			} catch ( any ignore ) {
+			}
+			try {
+				if ( !isNull( connection ) ) {
+					connection.disconnect();
+				}
+			} catch ( any ignore ) {
 			}
 		}
 
