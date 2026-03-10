@@ -116,7 +116,7 @@ component singleton {
 				var color = renderer.getAggregatedColor(
 					data.totalError ?: 0,
 					data.totalFail ?: 0,
-					0
+					data.totalSkipped ?: 0
 				);
 				p.line(
 						"  [Passed: #data.totalPass ?: 0#] [Failed: #data.totalFail ?: 0#] [Errors: #data.totalError ?: 0#] [Skipped: #data.totalSkipped ?: 0#] (#data.totalDuration ?: 0# ms)",
