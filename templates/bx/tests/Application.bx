@@ -6,8 +6,8 @@
  * to a root application.  Usually you mimic your application's Application.bx settings here.
  */
 class {
+	// Harness name
 	this.name              = "My Test Harness";
-
 	// The mapping to easily access the tests
 	this.mappings[ "/tests" ] = getDirectoryFromPath( getCurrentTemplatePath() );
 	// The mapping to easily access the root application usually the parent folder
