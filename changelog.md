@@ -11,7 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- TestBox 7 support
 - New template updates for CFML and BoxLang
+- New TestBox RUN addition for BoxLang
+- New `--streaming` option for `testbox run` command to enable streaming results in the CLI
+- New `--streaming --verbose` flag - Show all specs including passing ones (by default, only failures/skipped are persisted)
 
 ## [1.7.0] - 2025-08-06
 
