@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.7.0] - 2025-08-06
+## [1.8.0] - 2026-03-16
 
 ### Added
 
@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New TestBox RUN addition for BoxLang
 - New `--streaming` option for `testbox run` command to enable streaming results in the CLI
 - New `--streaming --verbose` flag - Show all specs including passing ones (by default, only failures/skipped are persisted)
+
+* * *
 
 ## [1.7.0] - 2025-08-06
 
@@ -166,7 +168,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New `testbox apidocs` command to open the TestBox API Docs in your browser.
 - Initial Creation of this project
 
-[unreleased]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.7.0...HEAD
+[unreleased]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.8.0...HEAD
+[1.8.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.4.0...v1.5.0
