@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-03-16
+
 ### Added
 
 - TestBox 7 support
@@ -166,7 +168,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New `testbox apidocs` command to open the TestBox API Docs in your browser.
 - Initial Creation of this project
 
-[unreleased]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.7.0...HEAD
+[unreleased]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.8.0...HEAD
+[1.8.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/Ortus-Solutions/testbox-cli/compare/v1.4.0...v1.5.0
