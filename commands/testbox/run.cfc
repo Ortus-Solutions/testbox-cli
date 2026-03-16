@@ -52,13 +52,20 @@
  * testbox run outputformats=json,antjunit,simple
  * testbox run outputformats=json,antjunit,simple outputFile=myresults
  * {code}
+ * .
+ * You can stream test results in real-time for immediate feedback during test execution
+ * {code:bash}
+ * testbox run --streaming
+ * {code}
  *
  **/
 component extends="testboxCLI.models.BaseCommand" {
 
 	// DI
-	property name="testingService" inject="TestingService@testbox-cli";
-	property name="CLIRenderer"    inject="CLIRenderer@testbox-cli";
+	property name="testingService"    inject="TestingService@testbox-cli";
+	property name="CLIRenderer"       inject="CLIRenderer@testbox-cli";
+	property name="SSEClient"         inject="SSEClient@testbox-cli";
+	property name="StreamingRenderer" inject="StreamingRenderer@testbox-cli";
 
 	// Default Runner Options
 	variables.RUNNER_OPTIONS = {
@@ -91,6 +98,7 @@ component extends="testboxCLI.models.BaseCommand" {
 	 * @outputFile  We will store the results in this output file as well as presenting it to you.
 	 * @outputFormats A list of output reporter to produce using the runner's JSON results only. Available formats are: json,xml,junit,antjunit,simple,dot,doc,min,mintext,doc,text,tap,codexwiki
 	 * @verbose Display extra details including passing and skipped tests.
+	 * @streaming   Stream test results in real-time via Server-Sent Events (SSE) for immediate feedback during test execution.
 	 * @testboxUseLocal When using outputformats, prefer testbox installation in current working directory over bundled version. If none found, it tries to download one
 	 **/
 	function run(
@@ -108,6 +116,7 @@ component extends="testboxCLI.models.BaseCommand" {
 		string outputFile,
 		string outputFormats = "",
 		boolean verbose,
+		boolean streaming       = false,
 		boolean testboxUseLocal = true
 	){
 		// Remove /\ to . in bundles
@@ -123,6 +132,12 @@ component extends="testboxCLI.models.BaseCommand" {
 
 		// Incorporate runner options
 		arguments.testboxUrl = addRunnerOptions( argumentCollection = arguments );
+
+		// If streaming mode, use SSE client
+		if ( arguments.streaming ) {
+			runStreaming( argumentCollection = arguments );
+			return;
+		}
 
 		// Advise we are running
 		print.boldGreenLine( "Executing tests #testboxUrl# please wait..." ).toConsole();
@@ -371,6 +386,114 @@ component extends="testboxCLI.models.BaseCommand" {
 			default: {
 				return ".json";
 			}
+		}
+	}
+
+	/**
+	 * Run tests in streaming mode using Server-Sent Events (SSE)
+	 * This provides real-time feedback as tests execute
+	 */
+	private function runStreaming(){
+		// Add streaming=true to the URL
+		var streamingUrl = arguments.testboxUrl & "&streaming=true";
+
+		// Get verbose setting
+		var boxOptions = packageService.readPackageDescriptor( getCWD() ).testbox;
+		var isVerbose  = arguments.verbose ?: boxOptions.verbose ?: false;
+
+		// Advise we are running in streaming mode
+		print
+			.boldCyanLine( "Executing tests in streaming mode..." )
+			.line()
+			.toConsole();
+
+		// Create event handlers for streaming output
+		var eventHandlers = StreamingRenderer.createEventHandlers( print, isVerbose );
+
+		// Track if tests failed for exit code
+		var testsFailed    = false;
+		var streamingError = false;
+
+		// Override testRunEnd to capture failure state
+		var originalTestRunEnd   = eventHandlers.testRunEnd;
+		eventHandlers.testRunEnd = function( data ){
+			// Check for failures in the full results
+			if (
+				structKeyExists( data, "results" ) && (
+					( data.results.totalFail ?: 0 ) > 0 ||
+					( data.results.totalError ?: 0 ) > 0
+				)
+			) {
+				testsFailed = true;
+			} else if ( ( data.totalFail ?: 0 ) > 0 || ( data.totalError ?: 0 ) > 0 ) {
+				testsFailed = true;
+			}
+			// Call original handler
+			originalTestRunEnd( data );
+		};
+
+		// Consume the SSE stream
+		var finalResults = {};
+		try {
+			finalResults = SSEClient.consumeStream(
+				url           = streamingUrl,
+				eventHandlers = eventHandlers,
+				onError       = function( error ){
+					// Mark streaming as failed for exit code
+					streamingError = true;
+					print.boldRedLine( "Streaming error: #error.message#" ).toConsole();
+					if ( structKeyExists( error, "detail" ) && len( error.detail ) ) {
+						print.redLine( error.detail ).toConsole();
+					}
+				}
+			);
+		} catch ( any e ) {
+			logger.error(
+				"Error during streaming: #e.message# #e.detail#",
+				e
+			);
+			return error( "Error executing streaming tests: #CR# #e.message##CR##e.detail#" );
+		}
+
+		// Set exit code based on results or streaming errors
+		if ( testsFailed || streamingError ) {
+			setExitCode( 1 );
+		}
+
+		// Render final summary using CLIRenderer if we have full results
+		if ( !structIsEmpty( finalResults ) ) {
+			print.line();
+			CLIRenderer.render( print, finalResults, isVerbose );
+		}
+
+		// Handle output formats if specified
+		if ( len( arguments.outputFormats ) && !structIsEmpty( finalResults ) ) {
+			print
+				.line()
+				.blueLine( "Output formats detected (#arguments.outputFormats#), building out reports..." )
+				.toConsole();
+
+			buildOutputFormats(
+				arguments.outputFile ?: "test-results",
+				arguments.outputFormats,
+				serializeJSON( finalResults )
+			);
+		}
+
+		// Handle legacy output file
+		if ( !isNull( arguments.outputFile ) && !len( arguments.outputFormats ) && !structIsEmpty( finalResults ) ) {
+			arguments.outputFile = resolvePath( arguments.outputFile );
+
+			var thisDir = getDirectoryFromPath( arguments.outputFile );
+			if ( !directoryExists( thisDir ) ) {
+				directoryCreate( thisDir );
+			}
+
+			fileWrite(
+				arguments.outputFile,
+				formatterUtil.formatJSON( serializeJSON( finalResults ) )
+			);
+			print.boldGreenLine( "===> JSON Report written to #arguments.outputFile#!" );
 		}
 	}
 
