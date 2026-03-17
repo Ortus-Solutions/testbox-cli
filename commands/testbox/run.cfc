@@ -139,6 +139,8 @@ component extends="testboxCLI.models.BaseCommand" {
 			return;
 		}
 
+		showTestBoxBanner( "TestBox Runner" );
+
 		// Advise we are running
 		print.boldGreenLine( "Executing tests #testboxUrl# please wait..." ).toConsole();
 

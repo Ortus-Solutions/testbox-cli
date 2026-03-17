@@ -84,6 +84,8 @@ component extends="testboxCLI.models.BaseCommand" {
 		// Tabula rasa
 		command( "cls" ).run();
 
+		showTestBoxBanner( "TestBox Watcher" );
+
 		// Start watcher with passed args only.
 		var testArgs = arguments.filter( ( k, v ) => !isNull( v ) );
 		watch()
