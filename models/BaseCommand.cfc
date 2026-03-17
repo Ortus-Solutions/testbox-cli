@@ -16,12 +16,12 @@ component {
 
 	// These are the locations of the various TestBox resources that we will use for generation and running.
 	// We will create mappings to these in the file system service when we ensure TestBox is installed.
-	static{
-		BROWSER_BX_PATH = "/testbox/bx/browser";
+	static {
+		BROWSER_BX_PATH   = "/testbox/bx/browser";
 		BROWSER_CFML_PATH = "/testbox/cfml/browser";
-		HARNESS_BX_PATH = "/testbox/bx/tests";
+		HARNESS_BX_PATH   = "/testbox/bx/tests";
 		HARNESS_CFML_PATH = "/testbox/cfml/tests";
-		VISUALIZER_PATH = "/testbox/test-visualizer";
+		VISUALIZER_PATH   = "/testbox/test-visualizer";
 	}
 
 	/**
@@ -131,7 +131,7 @@ component {
 	 *
 	 * @cwd The current working directory
 	 */
- 	function getTestBoxDescriptor( required cwd=getCwd() ){
+	function getTestBoxDescriptor( required cwd = getCwd() ){
 		return variables.packageService.readPackageDescriptor( arguments.cwd ).testbox;
 	}
 
