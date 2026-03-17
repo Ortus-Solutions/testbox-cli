@@ -29,12 +29,12 @@ component extends="testboxCLI.models.BaseCommand" {
 	 * @force   Skip the confirmation prompt and reinstall immediately
 	 */
 	function run(
-		string version  = "",
-		boolean force   = false
+		string version = "",
+		boolean force  = false
 	){
-		var modulePath    = variables.moduleConfig.path;
-		var bundlePath    = modulePath & "/testbox";
-		var installSlug   = len( arguments.version ) ? "testbox@#arguments.version#" : "testbox";
+		var modulePath  = variables.moduleConfig.path;
+		var bundlePath  = modulePath & "/testbox";
+		var installSlug = len( arguments.version ) ? "testbox@#arguments.version#" : "testbox";
 
 		showTestBoxBanner( "Reinstall CLI Bundle" );
 
@@ -53,9 +53,12 @@ component extends="testboxCLI.models.BaseCommand" {
 		var currentVersion = getTestBoxVersion( bundlePath );
 		variables.print
 			.line()
-			.boldWhite( "   CLI Bundle Path    " ).line( " #bundlePath#" )
-			.boldWhite( "   Installed Version  " ).line( " #currentVersion#" )
-			.boldWhite( "   Target Version     " ).line( " #( len( arguments.version ) ? arguments.version : "latest stable" )#" )
+			.boldWhite( "   CLI Bundle Path    " )
+			.line( " #bundlePath#" )
+			.boldWhite( "   Installed Version  " )
+			.line( " #currentVersion#" )
+			.boldWhite( "   Target Version     " )
+			.line( " #( len( arguments.version ) ? arguments.version : "latest stable" )#" )
 			.line()
 			.toConsole();
 
@@ -85,7 +88,8 @@ component extends="testboxCLI.models.BaseCommand" {
 			variables.print.line().toConsole();
 			printSuccess( "TestBox v#newVersion# reinstalled successfully into the CLI bundle path!" );
 			variables.print
-				.boldWhite( "   Path    " ).line( " #bundlePath#" )
+				.boldWhite( "   Path    " )
+				.line( " #bundlePath#" )
 				.line()
 				.toConsole();
 		} else {
