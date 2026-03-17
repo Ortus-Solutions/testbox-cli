@@ -1,3 +1,11 @@
+/**
+ *********************************************************************************
+ * Copyright Since 2014 CommandBox by Ortus Solutions, Corp
+ * www.coldbox.org | www.ortussolutions.com
+ ********************************************************************************
+ * This class is the base command for all TestBox related commands. It provides shared utilities for
+ * ensuring TestBox is available, discovering the runner URL, and other common tasks.
+ */
 component {
 
 	// Global Injections
@@ -6,12 +14,24 @@ component {
 	property name="serverService"  inject="serverService";
 	property name="packageService" inject="PackageService";
 
+	// These are the locations of the various TestBox resources that we will use for generation and running.
+	// We will create mappings to these in the file system service when we ensure TestBox is installed.
+	static{
+		BROWSER_BX_PATH = "/testbox/bx/browser";
+		BROWSER_CFML_PATH = "/testbox/cfml/browser";
+		HARNESS_BX_PATH = "/testbox/bx/tests";
+		HARNESS_CFML_PATH = "/testbox/cfml/tests";
+		VISUALIZER_PATH = "/testbox/test-visualizer";
+	}
+
 	/**
 	 * Ensure that TestBox is installed
 	 *
 	 * @testboxUseLocal Use a local version of TestBox or in the execution path. Defaults to true, else it tries to download it
+	 *
+	 * @return string The path to TestBox
 	 */
-	private function ensureTestBox( boolean testboxUseLocal = true ){
+	string function ensureTestBox( boolean testboxUseLocal = true ){
 		// Where it should go in the module installed locally
 		var testBoxPath   = variables.moduleConfig.path & "/testbox";
 		var modulePath    = variables.moduleConfig.path;
@@ -47,6 +67,8 @@ component {
 		// 	.green1onDodgerBlue2( " INFO  " )
 		// 	.line( " Created [/testbox] mapping at [#testBoxPath#]" )
 		// 	.toConsole();
+
+		return testBoxPath;
 	}
 
 	/**
@@ -57,7 +79,7 @@ component {
 	 *
 	 * @runner The runner argument
 	 */
-	private function discoverRunnerUrl( runner ){
+	string function discoverRunnerUrl( required string runner ){
 		// If a URL is passed, used it as an override
 		if ( left( arguments.runner, 4 ) == "http" || left( arguments.runner, 1 ) == "/" ) {
 			if ( !find( "?", arguments.runner ) ) {
@@ -109,8 +131,8 @@ component {
 	 *
 	 * @cwd The current working directory
 	 */
-	private function getTestBoxDescriptor( required cwd ){
-		return variables.packageService.readPackageDescriptor( getCWD() ).testbox;
+ 	function getTestBoxDescriptor( required cwd=getCwd() ){
+		return variables.packageService.readPackageDescriptor( arguments.cwd ).testbox;
 	}
 
 	/**
@@ -121,7 +143,7 @@ component {
 	 *
 	 * @return boolean
 	 */
-	private function isBoxLangProject( required cwd ){
+	function isBoxLangProject( required cwd ){
 		// Detect if it's a BoxLang server first.
 		var serverInfo = variables.serverService.resolveServerDetails( {} ).serverInfo;
 		if ( serverInfo.cfengine.findNoCase( "boxlang" ) ) {
@@ -147,6 +169,13 @@ component {
 		return false;
 	}
 
+	/**
+	 * Convert a component definition to a BoxLang class definition by replacing the "component" keyword with "class"
+	 *
+	 * @content The content of the component to convert
+	 *
+	 * @return string The converted class definition
+	 */
 	function toBoxLangClass( required content ){
 		return reReplaceNoCase(
 			arguments.content,

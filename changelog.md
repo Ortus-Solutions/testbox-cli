@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `getTestBoxDescriptor()` argument was not being used.
+- Leverage the `testbox` package as single source of truth, instead of duplicating logic in this module and risking it getting out of sync.
+
 ## [1.8.0] - 2026-03-16
 
 ### Added

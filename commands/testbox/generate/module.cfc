@@ -37,9 +37,9 @@ component extends="testboxCLI.models.BaseCommand" {
 			);
 
 			// Print the results to the console
-			print.greenLine( "Created the module at [#moduleDirectory#]" );
+			print.greenLine( "Generated module at [#moduleDirectory#]" );
 		} else {
-			error( "Directory #moduleDirectory# already exists!" );
+			error( "Directory [#moduleDirectory#] already exists!" );
 		}
 	}
 
