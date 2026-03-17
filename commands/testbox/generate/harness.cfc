@@ -21,6 +21,8 @@ component extends="testboxCLI.models.BaseCommand" {
 		string directory = getCWD(),
 		boolean boxlang  = isBoxLangProject( getCWD() )
 	){
+		showTestBoxBanner( "generate harness" );
+
 		// This will make each directory canonical and absolute
 		arguments.directory = resolvePath( arguments.directory & "/tests" );
 
@@ -40,7 +42,7 @@ component extends="testboxCLI.models.BaseCommand" {
 			);
 
 			// Print the results to the console
-			print.greenLine( "Generated harness at [#arguments.directory#]" );
+			printSuccess( "Generated harness at: #arguments.directory#" );
 		} else {
 			error( "Directory [#arguments.directory#] already exists!" );
 		}

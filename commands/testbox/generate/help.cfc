@@ -1,10 +1,52 @@
-component excludeFromHelp=true {
+component excludeFromHelp=true extends="testboxCLI.models.BaseCommand" {
 
 	function run(){
-		print.line();
-		print.yellowLine( "General help and description of how to use testbox generate" );
-		print.line();
-		print.line();
+		showTestBoxBanner( "testbox generate" );
+
+		variables.print
+			.boldWhiteLine( "  Generate test infrastructure for your application in seconds." )
+			.line()
+			.line( "  🏗️   Scaffold a full test harness with runners, Application.cfc and fixtures" )
+			.line( "  🌐  Generate an interactive in-browser test suite explorer" )
+			.line( "  📊  Generate a visual test result dashboard (test-visualizer)" )
+			.line( "  📦  Create a reusable TestBox module skeleton" )
+			.line( "  🌐  Both BoxLang (.bx) and CFML (.cfc) are supported" )
+			.line()
+			.boldCyanLine( "  ─────────────────────────────────────────────────────" )
+			.boldCyanLine( "  Commands" )
+			.boldCyanLine( "  ─────────────────────────────────────────────────────" )
+			.line()
+			.boldWhite( "  testbox generate harness" ).line( "      Generate a full test harness (tests/ folder)" )
+			.boldWhite( "  testbox generate browser" ).line( "      Generate an in-browser test suite explorer" )
+			.boldWhite( "  testbox generate visualizer" ).line( "   Generate a visual test result dashboard" )
+			.boldWhite( "  testbox generate module" ).line( "       Create a TestBox module skeleton" )
+			.line()
+			.boldCyanLine( "  ─────────────────────────────────────────────────────" )
+			.boldCyanLine( "  Examples" )
+			.boldCyanLine( "  ─────────────────────────────────────────────────────" )
+			.line()
+			.line( "  ## Generate a full test harness in the current project" )
+			.boldGreenLine( "  testbox generate harness" )
+			.line()
+			.line( "  ## Generate a harness as BoxLang" )
+			.boldGreenLine( "  testbox generate harness --boxlang" )
+			.line()
+			.line( "  ## Generate an in-browser test explorer" )
+			.boldGreenLine( "  testbox generate browser" )
+			.line()
+			.line( "  ## Generate a visual test result dashboard" )
+			.boldGreenLine( "  testbox generate visualizer" )
+			.line()
+			.line( "  ## Create a new TestBox module named myModule" )
+			.boldGreenLine( "  testbox generate module myModule" )
+			.line()
+			.line( "  ## Generate a harness into a specific directory" )
+			.boldGreenLine( "  testbox generate harness /path/to/myApp" )
+			.line()
+			.line( "  💡  Type " )
+			.boldWhite( "help testbox generate <command>" )
+			.line( " for detailed usage on any command." )
+			.line();
 	}
 
 }

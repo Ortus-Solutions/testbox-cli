@@ -17,6 +17,8 @@ component extends="testboxCLI.models.BaseCommand" {
 	 * @directory The base directory to create your test visualizer
 	 */
 	function run( string directory = getCWD() ){
+		showTestBoxBanner( "generate visualizer" );
+
 		// This will make each directory canonical and absolute
 		arguments.directory = resolvePath( arguments.directory & "/tests/test-visualizer" );
 
@@ -35,7 +37,7 @@ component extends="testboxCLI.models.BaseCommand" {
 			);
 
 			// Print the results to the console
-			print.greenLine( "Generated visualizer at [#arguments.directory#]" );
+			printSuccess( "Generated visualizer at: #arguments.directory#" );
 		} else {
 			error( "Directory [#arguments.directory#] already exists!" );
 		}
