@@ -13,7 +13,7 @@ component {
 	this.cfmapping = "testboxCLI";
 
 	function configure(){
-		settings = { templatesPath : modulePath & "/templates" }
+		variables.settings = { templatesPath : modulePath & "/templates" }
 	}
 
 	function onLoad(){
