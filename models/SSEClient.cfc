@@ -1,4 +1,8 @@
 /**
+ *********************************************************************************
+ * Copyright Since 2014 CommandBox by Ortus Solutions, Corp
+ * www.testbox.run | www.boxlang.io | www.ortussolutions.com
+ ********************************************************************************
  * Service for consuming Server-Sent Events (SSE) streams from TestBox
  * Parses SSE format and invokes callbacks for each event type
  */

@@ -1,4 +1,8 @@
 /**
+ *********************************************************************************
+ * Copyright Since 2014 CommandBox by Ortus Solutions, Corp
+ * www.testbox.run | www.boxlang.io | www.ortussolutions.com
+ ********************************************************************************
  * Renders streaming test results to the CLI in real-time
  * Works with SSE events from TestBox's StreamingRunner
  */

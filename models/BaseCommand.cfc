@@ -1,7 +1,7 @@
 /**
  *********************************************************************************
  * Copyright Since 2014 CommandBox by Ortus Solutions, Corp
- * www.coldbox.org | www.ortussolutions.com
+ * www.testbox.run | www.boxlang.io | www.ortussolutions.com
  ********************************************************************************
  * This class is the base command for all TestBox related commands. It provides shared utilities for
  * ensuring TestBox is available, discovering the runner URL, and other common tasks.
