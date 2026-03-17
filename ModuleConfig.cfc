@@ -1,7 +1,7 @@
 /**
  *********************************************************************************
  * Copyright Since 2014 CommandBox by Ortus Solutions, Corp
- * www.coldbox.org | www.ortussolutions.com
+ * www.testbox.run | www.boxlang.io | www.ortussolutions.com
  ********************************************************************************
  *
  * @author Brad Wood, Luis Majano
@@ -13,7 +13,7 @@ component {
 	this.cfmapping = "testboxCLI";
 
 	function configure(){
-		settings = { templatesPath : modulePath & "/templates" }
+		variables.settings = { templatesPath : modulePath & "/templates" }
 	}
 
 	function onLoad(){

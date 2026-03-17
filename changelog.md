@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- New `testbox info` command to show information about the current TestBox installation, including version and location.
+- New `testbox reinstall` command to force reinstallation of TestBox, which can be useful if you suspect your current installation is corrupted or outdated but in the CLI package only.
+- Better help messages for all commands, including examples and usage instructions.
+
+### Fixed
+
+- `getTestBoxDescriptor()` argument was not being used.
+- Leverage the `testbox` package as single source of truth, instead of duplicating logic in this module and risking it getting out of sync.
+
 ## [1.8.0] - 2026-03-16
 
 ### Added

@@ -1,14 +1,14 @@
 /**
- * Create a new TestBox test visualizer for an application. The test harness will be created in a directory called tests/test-visualizer.
+ * Generate a new TestBox test visualizer for an application. The test visualizer will be created in a directory called tests/test-visualizer.
  * .
  * You can run it from the root of your application.
  * {code:bash}
- * testbox create visualizer
+ * testbox generate visualizer
  * {code}
  * .
  * Or pass the base directory of your application as a parameter
  * {code:bash}
- * testbox create visualizer C:\myApp
+ * testbox generate visualizer C:\myApp
  * {code}
  */
 component extends="testboxCLI.models.BaseCommand" {
@@ -17,6 +17,8 @@ component extends="testboxCLI.models.BaseCommand" {
 	 * @directory The base directory to create your test visualizer
 	 */
 	function run( string directory = getCWD() ){
+		showTestBoxBanner( "generate visualizer" );
+
 		// This will make each directory canonical and absolute
 		arguments.directory = resolvePath( arguments.directory & "/tests/test-visualizer" );
 
@@ -24,17 +26,20 @@ component extends="testboxCLI.models.BaseCommand" {
 		if ( !directoryExists( arguments.directory ) ) {
 			directoryCreate( arguments.directory );
 
-			// Copy template
+			// Ensure TestBox is installed
+			ensureTestBox()
+
+			// Copy template from testbox source
 			directoryCopy(
-				"#variables.settings.templatesPath#/visualizer/",
+				expandPath( static.VISUALIZER_PATH ),
 				arguments.directory,
 				true
 			);
 
 			// Print the results to the console
-			print.greenLine( "Created " & arguments.directory );
+			printSuccess( "Generated visualizer at: #arguments.directory#" );
 		} else {
-			error( "Directory #arguments.directory# already exists!" );
+			error( "Directory [#arguments.directory#] already exists!" );
 		}
 	}
 

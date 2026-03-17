@@ -23,6 +23,8 @@ component extends="testboxCLI.models.BaseCommand" {
 		string rootDirectory = getCWD(),
 		boolean boxlang      = isBoxLangProject( getCWD() )
 	){
+		showTestBoxBanner( "generate module" );
+
 		var moduleDirectory = resolvePath( arguments.rootDirectory ) & "/" & arguments.name;
 
 		// Validate directory
@@ -37,9 +39,9 @@ component extends="testboxCLI.models.BaseCommand" {
 			);
 
 			// Print the results to the console
-			print.greenLine( "Created the module at [#moduleDirectory#]" );
+			printSuccess( "Generated module at: #moduleDirectory#" );
 		} else {
-			error( "Directory #moduleDirectory# already exists!" );
+			error( "Directory [#moduleDirectory#] already exists!" );
 		}
 	}
 
