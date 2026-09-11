@@ -275,7 +275,9 @@ component extends="testboxCLI.models.BaseCommand" {
 		var statusCode  = arguments.results.statusCode ?: "unknown";
 		var contentType = "unknown";
 		if ( arguments.results.keyExists( "responseHeader" ) && isStruct( arguments.results.responseHeader ) ) {
-			contentType = arguments.results.responseHeader[ "content-type" ] ?: arguments.results.responseHeader[ "Content-Type" ] ?: "unknown";
+			contentType = arguments.results.responseHeader[ "content-type" ] ?: arguments.results.responseHeader[
+				"Content-Type"
+			] ?: "unknown";
 		}
 
 		print.boldRedLine( "TestBox runner returned an invalid JSON result." ).toConsole();
@@ -285,7 +287,14 @@ component extends="testboxCLI.models.BaseCommand" {
 			print.redLine( "JSON keys: #structKeyList( arguments.decoded )#" ).toConsole();
 		}
 		print.redLine( "Response body:" ).toConsole();
-		print.redLine( left( arguments.results.fileContent ?: "<empty response>", 10000 ) ).toConsole();
+		print
+			.redLine(
+				left(
+					arguments.results.fileContent ?: "<empty response>",
+					10000
+				)
+			)
+			.toConsole();
 	}
 
 	/**
