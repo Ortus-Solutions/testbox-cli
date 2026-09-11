@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Updates
+
+- Improve results when invalid json is outputted on test results
+
 ## [1.9.0] - 2026-03-17
 
 ### Added

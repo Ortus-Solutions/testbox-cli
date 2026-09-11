@@ -164,8 +164,15 @@ component extends="testboxCLI.models.BaseCommand" {
 		 **********************************************************************************/
 
 		// Default is to template our own output based on a JSON response
-		if ( variables.RUNNER_OPTIONS.reporter == "json" && isJSON( results.fileContent ) ) {
+		if ( variables.RUNNER_OPTIONS.reporter == "json" ) {
+			if ( !isJSON( results.fileContent ) ) {
+				return reportInvalidRunnerResponse( results );
+			}
+
 			var testData = deserializeJSON( results.fileContent );
+			if ( !isStruct( testData ) || !testData.keyExists( "totalFail" ) || !testData.keyExists( "totalError" ) ) {
+				return reportInvalidRunnerResponse( results, testData );
+			}
 
 			// If any tests failed or errored.
 			if ( testData.totalFail || testData.totalError ) {
@@ -254,6 +261,31 @@ component extends="testboxCLI.models.BaseCommand" {
 			);
 			print.boldGreenLine( "===> JSON Report written to #arguments.outputFile#!" );
 		}
+	}
+
+	/**
+	 * Report a response that cannot be consumed as a TestBox JSON result.
+	 *
+	 * @results  The HTTP response from the TestBox runner
+	 * @decoded  The decoded response, when the response was valid JSON
+	 */
+	private function reportInvalidRunnerResponse( required struct results, any decoded ){
+		setExitCode( 1 );
+
+		var statusCode  = arguments.results.statusCode ?: "unknown";
+		var contentType = "unknown";
+		if ( arguments.results.keyExists( "responseHeader" ) && isStruct( arguments.results.responseHeader ) ) {
+			contentType = arguments.results.responseHeader[ "content-type" ] ?: arguments.results.responseHeader[ "Content-Type" ] ?: "unknown";
+		}
+
+		print.boldRedLine( "TestBox runner returned an invalid JSON result." ).toConsole();
+		print.redLine( "HTTP status: #statusCode#" ).toConsole();
+		print.redLine( "Content-Type: #contentType#" ).toConsole();
+		if ( !isNull( arguments.decoded ) && isStruct( arguments.decoded ) ) {
+			print.redLine( "JSON keys: #structKeyList( arguments.decoded )#" ).toConsole();
+		}
+		print.redLine( "Response body:" ).toConsole();
+		print.redLine( left( arguments.results.fileContent ?: "<empty response>", 10000 ) ).toConsole();
 	}
 
 	/**
