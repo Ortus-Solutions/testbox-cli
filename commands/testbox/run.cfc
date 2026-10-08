@@ -82,9 +82,33 @@ component extends="testboxCLI.models.BaseCommand" {
 	};
 
 	/**
+	 * Complete configured runner URLs or the names of runners in box.json.
+	 */
+	array function runnerComplete(){
+		var boxJSON = variables.packageService.readPackageDescriptor( getCWD() );
+		var runner  = boxJSON.testbox.runner ?: "";
+		var runners = [];
+
+		if ( isSimpleValue( runner ) && len( runner ) ) {
+			return [ runner ];
+		}
+
+		if ( isArray( runner ) ) {
+			for ( var namedRunners in runner ) {
+				if ( isStruct( namedRunners ) ) {
+					runners.append( namedRunners.keyArray(), true );
+				}
+			}
+		}
+
+		return runners;
+	}
+
+	/**
 	 * Ability to execute TestBox tests
 	 *
 	 * @runner      The URL or shortname of the runner to use, if it uses a short name we look in your box.json
+	 * @runner.optionsUDF runnerComplete
 	 * @bundles     The path or list of paths of the spec bundle CFCs to run and test ONLY
 	 * @directory   The directory to use to discover test bundles and specs to test. Mutually exclusive with <code>bundles</code>. Example: <code>directory=tests.specs</code>
 	 * @recurse     Recurse the directory mapping or not. Defaults to true.
