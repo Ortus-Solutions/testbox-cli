@@ -115,6 +115,37 @@ testbox run server1
 testbox run server2
 ```
 
+### Parallel workers
+
+With a parallel-capable TestBox runner configured:
+
+```sh
+box testbox run runner=parallel workers=4
+box testbox run runner=parallel workers=4 interactive=false
+```
+
+Auto mode uses CommandBox's CI/terminal detection. Interactive terminals get live worker rows, spec counts, elapsed clocks and final timings. CI logs append bundle counts, durations and results. Ctrl-C is acknowledged immediately and requests cancellation; the environment provider owns graceful shutdown, the 30-second escalation deadline and cleanup verification. A disconnected stream or incomplete run fails the command.
+
+More workers require more CPU, memory, connections and isolated application resources. The focused application comparisons behind this feature saved about 5–11% going from two to four workers; they do not establish a whole-suite speedup or an optimal worker count. See the TestBox parallel guide for the provider contract and benchmark limitations.
+
+### Independent CI jobs
+
+Use the normal serial runner in each matrix job. No worker provider is required:
+
+```sh
+box testbox run runner=serial shard=1/4 shardRunId=build-42-attempt-1 outputFile=results/shard-1.json
+```
+
+Other jobs use `2/4`, `3/4` and `4/4`, with identical source, dependencies, filters and run ID. Upload each JSON file even when tests fail. A final job downloads all the reports into one directory:
+
+```sh
+box testbox merge directory=downloaded-results outputFile=results/combined.json
+```
+
+Merge fails for missing/duplicate jobs, mixed selections or incomplete bundle coverage, and preserves assertion failures. Empty shards still report. The displayed duration is the longest shard, not the CI workflow's wall time. Each CI job still needs its normal isolated database/application setup; separate runners do not isolate shared services automatically. Keep different runtime/configuration matrices in separate artifact sets. The CLI refuses `workers` together with `shard`, and shard artifacts require JSON; `outputFormats` can generate additional reports. Coverage recordings are not merged.
+
+See [a GitHub Actions matrix example](docs/ci-shards.md).
+
 ### Filtering Tests
 
 Run only specific bundles, suites, or specs:

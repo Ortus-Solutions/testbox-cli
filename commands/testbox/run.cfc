@@ -98,6 +98,11 @@ component extends="testboxCLI.models.BaseCommand" {
 	 * @outputFile  We will store the results in this output file as well as presenting it to you.
 	 * @outputFormats A list of output reporter to produce using the runner's JSON results only. Available formats are: json,xml,junit,antjunit,simple,dot,doc,min,mintext,doc,text,tap,codexwiki
 	 * @verbose Display extra details including passing and skipped tests.
+	 * @shard       CI job selection, for example 1/4. Use a serial runner; each CI job owns its environment.
+	 * @shardRunId  Shared unique ID for this CI run and attempt; included in every shard report.
+	 * @workers     Number of isolated workers; requires a parallel-capable runner. Zero retains serial execution.
+	 * @interactive Parallel progress display: auto uses CommandBox CI/TTY detection; true redraws worker lines; false prints permanent logs.
+	 * @interactive.options auto,true,false
 	 * @streaming   Stream test results in real-time via Server-Sent Events (SSE) for immediate feedback during test execution.
 	 * @testboxUseLocal When using outputformats, prefer testbox installation in current working directory over bundled version. If none found, it tries to download one
 	 **/
@@ -116,9 +121,52 @@ component extends="testboxCLI.models.BaseCommand" {
 		string outputFile,
 		string outputFormats = "",
 		boolean verbose,
+		string shard            = "",
+		string shardRunId       = "",
+		numeric workers         = 0,
+		string interactive      = "auto",
 		boolean streaming       = false,
 		boolean testboxUseLocal = true
 	){
+		if ( len( arguments.shard ) ) {
+			if (
+				!reFind(
+					"^[1-9][0-9]*/[1-9][0-9]*$",
+					arguments.shard
+				) || val( listFirst( arguments.shard, "/" ) ) > val( listLast( arguments.shard, "/" ) ) || !len(
+					trim( arguments.shardRunId )
+				)
+			) {
+				return error( "Use shard=index/count and a shared shardRunId for this CI run, for example shard=1/4 shardRunId=build-42." )
+			}
+			if ( arguments.workers != 0 ) {
+				return error( "Use a serial runner for CI shards. Each CI job provides its own environment." )
+			}
+			if ( !isNull( arguments.reporter ) && len( arguments.reporter ) && arguments.reporter != "json" ) {
+				return error( "CI shards require the JSON reporter. Use outputFormats for additional reports." )
+			}
+			arguments.reporter           = "json"
+			arguments.options.shard      = arguments.shard
+			arguments.options.shardRunId = arguments.shardRunId
+		}
+		// Parallel execution is opt-in and requires a parallel-capable runner.
+		if ( arguments.workers != 0 ) {
+			if (
+				!listFindNoCase(
+					"auto,true,false",
+					arguments.interactive
+				)
+			) {
+				return error( "Interactive must be auto, true, or false." );
+			}
+			if ( arguments.workers < 1 || arguments.workers != int( arguments.workers ) ) {
+				return error( "Workers must be a positive integer." );
+			}
+			arguments.streaming       = true;
+			arguments.options.workers = arguments.workers;
+			arguments.options.action  = "run";
+			arguments.options.runId   = lCase( replace( createUUID(), "-", "", "all" ) );
+		}
 		// Remove /\ to . in bundles
 		if ( !isNull( arguments.bundles ) ) {
 			arguments.bundles = arguments.bundles.replace( "/\", "." );
@@ -132,6 +180,23 @@ component extends="testboxCLI.models.BaseCommand" {
 
 		// Incorporate runner options
 		arguments.testboxUrl = addRunnerOptions( argumentCollection = arguments );
+
+		if ( len( arguments.shard ) ) {
+			try {
+				http
+					url         =( arguments.testboxUrl & "&action=capabilities&dryRun=true" )
+					method      ="GET"
+					timeout     =15
+					throwOnError=true
+					result      ="local.capabilityResponse";
+				var capabilities = deserializeJSON( local.capabilityResponse.fileContent )
+				if ( !( capabilities.sharding ?: false ) ) {
+					return error( "This runner does not support CI sharding. Update TestBox and use its standard runner." )
+				}
+			} catch ( any capabilityError ) {
+				return error( "Unable to confirm CI sharding support: " & capabilityError.message )
+			}
+		}
 
 		// If streaming mode, use SSE client
 		if ( arguments.streaming ) {
@@ -147,7 +212,7 @@ component extends="testboxCLI.models.BaseCommand" {
 		// run it now baby!
 		try {
 			// Throw on error means this command will fail if the actual test runner blows up-- possibly on a compilation issue.
-			http url=testBoxURL throwonerror=true result="local.results";
+			http url=arguments.testboxUrl throwonerror="#true#" result="local.results";
 		} catch ( any e ) {
 			logger.error(
 				"Error executing tests: #e.message# #e.detail#",
@@ -174,6 +239,16 @@ component extends="testboxCLI.models.BaseCommand" {
 				return reportInvalidRunnerResponse( results, testData );
 			}
 
+			if (
+				len( arguments.shard ) && !validShardReport(
+					testData,
+					arguments.shard,
+					arguments.shardRunId
+				)
+			) {
+				return error( "The runner did not return a complete report for the requested CI shard." )
+			}
+
 			// If any tests failed or errored.
 			if ( testData.totalFail || testData.totalError ) {
 				// Send back failing exit code to shell
@@ -187,6 +262,7 @@ component extends="testboxCLI.models.BaseCommand" {
 				testData,
 				arguments.verbose ?: boxOptions.verbose ?: true
 			);
+
 
 			// For all other reporters, just dump out whatever we got from the server
 		} else {
@@ -322,9 +398,8 @@ component extends="testboxCLI.models.BaseCommand" {
 			// Check argument overrides
 			if ( !isNull( arguments[ thisOption ] ) ) {
 				arguments.testboxURL &= "&#encodeForURL( thisOption )#=#encodeForURL( arguments[ thisOption ] )#";
-			}
-			// Check runtime options now
-			else if ( boxOptions.keyExists( thisOption ) && len( boxOptions[ thisOption ] ) ) {
+			} else if ( boxOptions.keyExists( thisOption ) && len( boxOptions[ thisOption ] ) ) {
+				// Check runtime options now
 				if ( isSimpleValue( boxOptions[ thisOption ] ) ) {
 					arguments.testboxURL &= "&#encodeForURL( thisOption )#=#encodeForURL( boxOptions[ thisOption ] )#";
 				} else {
@@ -332,9 +407,8 @@ component extends="testboxCLI.models.BaseCommand" {
 						"Ignoring [testbox.#thisOption#] in your box.json since it's not a string.  We can't append it to a URL like that."
 					);
 				}
-			}
-			// Defaults
-			else if ( len( variables.RUNNER_OPTIONS[ thisOption ] ) ) {
+			} else if ( len( variables.RUNNER_OPTIONS[ thisOption ] ) ) {
+				// Defaults
 				arguments.testboxURL &= "&#encodeForURL( thisOption )#=#encodeForURL( variables.RUNNER_OPTIONS[ thisOption ] )#";
 			}
 		}
@@ -378,9 +452,8 @@ component extends="testboxCLI.models.BaseCommand" {
 		arguments.outputFormats
 			.listToArray()
 			.each( ( format ) => {
-				// Build out the targetFile
 				var targetFile = getCWD() & outputFile & getOutputExtension( arguments.format );
-				// write out the JSON
+
 				fileWrite(
 					targetFile,
 					testbox
@@ -432,6 +505,34 @@ component extends="testboxCLI.models.BaseCommand" {
 		}
 	}
 
+	private boolean function validShardReport(
+		required struct report,
+		required string shard,
+		required string runId
+	){
+		var manifest = report.shard ?: {}
+		var index    = val( listFirst( shard, "/" ) )
+		var count    = val( listLast( shard, "/" ) )
+		if (
+			!( manifest.complete ?: false ) || ( manifest.index ?: 0 ) != index || ( manifest.plan.count ?: 0 ) != count || compare(
+				manifest.plan.runId ?: "",
+				runId
+			) != 0 || ( manifest.plan.groups ?: [] ).len() != count
+		) {
+			return false
+		}
+		var expected = duplicate( manifest.plan.groups[ index ] )
+		var actual   = ( report.bundleStats ?: [] ).map( function( bundle ){
+			return bundle.path
+		} )
+		expected.sort( "text" )
+		actual.sort( "text" )
+		return compare(
+			serializeJSON( expected ),
+			serializeJSON( actual )
+		) == 0 && ( report.totalBundles ?: 0 ) == actual.len()
+	}
+
 	/**
 	 * Run tests in streaming mode using Server-Sent Events (SSE)
 	 * This provides real-time feedback as tests execute
@@ -439,6 +540,30 @@ component extends="testboxCLI.models.BaseCommand" {
 	private function runStreaming(){
 		// Add streaming=true to the URL
 		var streamingUrl = arguments.testboxUrl & "&streaming=true";
+
+		// Reject unsupported runners before executing any tests.
+		if ( arguments.workers > 0 ) {
+			var capabilitiesUrl = reReplaceNoCase(
+				arguments.testboxUrl,
+				"([?&])action=run(?=&|$)",
+				"\1action=capabilities"
+			);
+			capabilitiesUrl &= "&dryRun=true&streaming=false";
+			http url="#capabilitiesUrl#" method="GET" timeout="#15#" result="local.capabilityResponse";
+			if ( left( capabilityResponse.statusCode, 3 ) != "200" || !isJSON( capabilityResponse.fileContent ) ) {
+				return error(
+					"This runner does not advertise worker support. Configure a TestBox parallel Runner with an environment provider."
+				);
+			}
+			var capabilities = deserializeJSON( capabilityResponse.fileContent );
+			if ( !( capabilities.workers ?: false ) || arguments.workers > ( capabilities.maxWorkers ?: 0 ) ) {
+				return error(
+					"Worker count is unsupported by this runner. Its advertised maximum is " & (
+						capabilities.maxWorkers ?: 0
+					) & "."
+				);
+			}
+		}
 
 		// Get verbose setting
 		var boxOptions = packageService.readPackageDescriptor( getCWD() ).testbox;
@@ -451,7 +576,26 @@ component extends="testboxCLI.models.BaseCommand" {
 			.toConsole();
 
 		// Create event handlers for streaming output
-		var eventHandlers = StreamingRenderer.createEventHandlers( print, isVerbose );
+		var eventHandlers = {};
+		var parallelMode  = arguments.workers > 0;
+		if ( arguments.workers > 0 ) {
+			var terminal       = variables.shell.getReader().getTerminal();
+			var useInteractive = arguments.interactive == "auto"
+			 ? variables.shell.isTerminalInteractive()
+			 : arguments.interactive == "true";
+			useInteractive = useInteractive && terminal.getWidth() > 0 &&
+			left( terminal.getType(), 4 ) != "dumb" &&
+			!variables.systemSettings.getSystemSetting( "box_currentCommandPiped", false );
+			var parallelRenderer = new testboxCLI.models.ParallelStreamingRenderer();
+			eventHandlers        = parallelRenderer.createEventHandlers(
+				print,
+				isVerbose,
+				useInteractive,
+				terminal
+			);
+		} else {
+			eventHandlers = variables.StreamingRenderer.createEventHandlers( print, isVerbose );
+		}
 
 		// Track if tests failed for exit code
 		var testsFailed    = false;
@@ -462,10 +606,8 @@ component extends="testboxCLI.models.BaseCommand" {
 		eventHandlers.testRunEnd = function( data ){
 			// Check for failures in the full results
 			if (
-				structKeyExists( data, "results" ) && (
-					( data.results.totalFail ?: 0 ) > 0 ||
-					( data.results.totalError ?: 0 ) > 0
-				)
+				structKeyExists( data, "results" ) &&
+				( ( data.results.totalFail ?: 0 ) > 0 || ( data.results.totalError ?: 0 ) > 0 )
 			) {
 				testsFailed = true;
 			} else if ( ( data.totalFail ?: 0 ) > 0 || ( data.totalError ?: 0 ) > 0 ) {
@@ -476,14 +618,44 @@ component extends="testboxCLI.models.BaseCommand" {
 		};
 
 		// Consume the SSE stream
-		var finalResults = {};
+		var finalResults             = {};
+		var terminalHandlerInstalled = false;
+		var nativeHandlerInstalled   = false;
+		var interruptSignal          = createObject(
+			"java",
+			"org.jline.terminal.Terminal$Signal"
+		).INT;
 		try {
+			if ( parallelMode ) {
+				var interruptHandler         = new testboxCLI.models.ParallelInterruptHandler( parallelRenderer, streamingUrl );
+				var previousInterruptHandler = terminal.handle(
+					interruptSignal,
+					createDynamicProxy(
+						interruptHandler,
+						[ "org.jline.terminal.Terminal$SignalHandler" ]
+					)
+				);
+				terminalHandlerInstalled  = true;
+				// Native INT handles non-interactive CommandBox invocations; terminal INT handles the shell.
+				var nativeInterruptSignal = createObject( "java", "sun.misc.Signal" ).init( "INT" );
+				var previousNativeHandler = nativeInterruptSignal.handle(
+					nativeInterruptSignal,
+					createDynamicProxy(
+						interruptHandler,
+						[ "sun.misc.SignalHandler" ]
+					)
+				);
+				nativeHandlerInstalled = true;
+			}
 			finalResults = SSEClient.consumeStream(
 				url           = streamingUrl,
 				eventHandlers = eventHandlers,
 				onError       = function( error ){
-					// Mark streaming as failed for exit code
 					streamingError = true;
+					if ( parallelMode ) {
+						interruptHandler.requestCancellation( "Stream disconnected; requesting worker shutdown" );
+						parallelRenderer.abort( error.type contains "interrupt" ? "Cancelled" : "Failed" );
+					}
 					print.boldRedLine( "Streaming error: #error.message#" ).toConsole();
 					if ( structKeyExists( error, "detail" ) && len( error.detail ) ) {
 						print.redLine( error.detail ).toConsole();
@@ -491,15 +663,47 @@ component extends="testboxCLI.models.BaseCommand" {
 				}
 			);
 		} catch ( any e ) {
+			if ( arguments.workers > 0 ) {
+				interruptHandler.requestCancellation( "Execution interrupted; requesting worker shutdown" );
+				parallelRenderer.abort( e.type contains "interrupt" ? "Cancelled" : "Failed" );
+			}
 			logger.error(
 				"Error during streaming: #e.message# #e.detail#",
 				e
 			);
 			return error( "Error executing streaming tests: #CR# #e.message##CR##e.detail#" );
+		} finally {
+			if ( nativeHandlerInstalled ) {
+				nativeInterruptSignal.handle(
+					nativeInterruptSignal,
+					interruptHandler.wrapPrevious( previousNativeHandler )
+				);
+			}
+			if ( terminalHandlerInstalled ) {
+				terminal.handle(
+					interruptSignal,
+					interruptHandler.wrapPrevious( previousInterruptHandler )
+				);
+			}
 		}
 
+		if ( arguments.workers > 0 && structIsEmpty( finalResults ) ) {
+			parallelRenderer.abort();
+		}
+		if (
+			len( arguments.shard ?: "" ) && !validShardReport(
+				finalResults,
+				arguments.shard,
+				arguments.shardRunId
+			)
+		) {
+			return error( "The runner did not return a complete report for the requested CI shard." )
+		}
 		// Set exit code based on results or streaming errors
-		if ( testsFailed || streamingError ) {
+		if (
+			testsFailed || streamingError || structIsEmpty( finalResults ) ||
+			( arguments.workers > 0 && ( !finalResults.keyExists( "parallel" ) || !finalResults.passed ) )
+		) {
 			setExitCode( 1 );
 		}
 
